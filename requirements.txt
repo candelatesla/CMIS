@@ -1,0 +1,9 @@
+streamlit==1.29.0
+pymongo==4.6.1
+python-dotenv==1.0.0
+pydantic==2.5.3
+email-validator==2.1.0
+groq==0.4.1
+requests==2.31.0
+pdfplumber==0.10.3
+apscheduler==3.10.4

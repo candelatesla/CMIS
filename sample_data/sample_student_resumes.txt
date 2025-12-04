@@ -1,0 +1,814 @@
+Alex Martinez
+MIS Major | Senior
+Email: amartinez@tamu.edu | Phone: (979) 555-0101
+UIN: 234567890
+
+EDUCATION
+Bachelor of Science in Management Information Systems
+Texas A&M University | Expected Graduation: May 2025
+GPA: 3.8/4.0
+
+SKILLS
+Technical: SQL, Python, Tableau, Power BI, SAP, Salesforce
+Business Analysis: Requirements Gathering, Process Mapping, Stakeholder Management
+Project Management: Agile/Scrum, JIRA, Trello, MS Project
+Data Analytics: Excel (Advanced), R, Data Visualization
+
+EXPERIENCE
+Business Analyst Intern | Fortune 500 Company
+Summer 2024
+- Analyzed business processes and created documentation for ERP system upgrade
+- Developed 15+ Tableau dashboards for executive reporting
+- Led requirements gathering sessions with 20+ stakeholders
+- Reduced reporting cycle time by 35% through automation
+
+IT Consultant | University IT Department
+January 2024 - Present
+- Provide technical support and consulting for campus systems
+- Trained 100+ students and faculty on enterprise software
+
+PROJECTS
+Student Organization Management System
+- Designed and implemented web-based system for campus organizations
+- Technologies: Python Flask, PostgreSQL, Bootstrap
+- Currently used by 50+ student organizations
+
+INTERESTS
+Business Intelligence, Data Analytics, Enterprise Systems, Digital Transformation
+
+---
+
+Sarah Chen
+Computer Science Major | Junior
+Email: schen@tamu.edu | Phone: (832) 555-0102
+UIN: 345678901
+
+EDUCATION
+Bachelor of Science in Computer Science
+Texas A&M University | Expected Graduation: May 2026
+GPA: 3.9/4.0
+Dean's List: All Semesters
+
+SKILLS
+Languages: Python, Java, C++, JavaScript, TypeScript, Go
+Frameworks: React, Angular, Django, Spring Boot, Node.js
+DevOps: Docker, Kubernetes, Jenkins, GitHub Actions, Terraform
+Cloud: AWS (Certified Solutions Architect Associate), Azure, GCP
+Database: PostgreSQL, MongoDB, Redis, DynamoDB
+
+EXPERIENCE
+Software Engineering Intern | Tech Giant Corp
+Summer 2024
+- Developed microservices for payment processing system handling $1M+ daily
+- Implemented CI/CD pipeline reducing deployment time by 60%
+- Collaborated with team of 12 engineers across 3 time zones
+
+Full Stack Developer | Student Startup
+September 2023 - Present
+- Built real-time collaboration platform with WebSocket integration
+- Architected scalable backend serving 5,000+ active users
+- Led technical interviews and mentored junior developers
+
+PROJECTS
+Distributed Task Scheduler
+- Created distributed system for task scheduling using Go and Redis
+- Implemented consistent hashing for load balancing
+- Handles 10,000+ tasks per minute with 99.9% uptime
+
+INTERESTS
+Distributed Systems, Cloud Architecture, Machine Learning, System Design
+
+---
+
+Michael Johnson
+Cybersecurity Major | Senior
+Email: mjohnson@tamu.edu | Phone: (214) 555-0103
+UIN: 456789012
+
+EDUCATION
+Bachelor of Science in Cybersecurity
+Texas A&M University | Expected Graduation: December 2025
+GPA: 3.7/4.0
+Certifications: CompTIA Security+, CEH (in progress)
+
+SKILLS
+Security: Penetration Testing, Vulnerability Assessment, SIEM, IDS/IPS
+Tools: Kali Linux, Metasploit, Wireshark, Nmap, Burp Suite, Splunk
+Programming: Python, Bash, PowerShell, C
+Networking: TCP/IP, Firewalls, VPN, Network Architecture
+Compliance: NIST, ISO 27001, GDPR awareness
+
+EXPERIENCE
+Security Analyst Intern | Cybersecurity Firm
+Summer 2024
+- Conducted penetration testing for 10+ client environments
+- Identified and documented 50+ security vulnerabilities
+- Developed Python scripts for automated security scanning
+- Presented findings and remediation plans to clients
+
+CTF Team Captain | University Cybersecurity Club
+August 2023 - Present
+- Led team to top 10 finish in 3 national CTF competitions
+- Organized weekly security workshops for 40+ members
+
+PROJECTS
+Network Intrusion Detection System
+- Built ML-based IDS using Python and Scikit-learn
+- Achieved 94% accuracy in detecting malicious traffic
+- Deployed on university lab network for testing
+
+INTERESTS
+Ethical Hacking, Network Security, Malware Analysis, Cloud Security
+
+---
+
+Emily Rodriguez
+MIS Major | Junior
+Email: erodriguez@tamu.edu | Phone: (713) 555-0104
+UIN: 567890123
+
+EDUCATION
+Bachelor of Science in Management Information Systems
+Texas A&M University | Expected Graduation: May 2026
+GPA: 3.6/4.0
+Minor in Business Analytics
+
+SKILLS
+Business Tools: Salesforce, SAP S/4HANA, ServiceNow, Microsoft Dynamics
+Analytics: SQL, Python, R, Tableau, Power BI, Google Analytics
+Project Management: Certified Scrum Master (CSM), PMP Fundamentals
+Process Improvement: Six Sigma Yellow Belt, Lean Methodologies
+
+EXPERIENCE
+IT Project Coordinator | Healthcare Technology Company
+Summer 2024
+- Coordinated implementation of EMR system for 200+ users
+- Managed project timeline and stakeholder communications
+- Created training materials and conducted user training sessions
+- Achieved 95% on-time project milestone completion rate
+
+Student Consultant | Mays Business School
+January 2024 - Present
+- Provide IT consulting to local small businesses
+- Developed digital transformation roadmaps for 5 clients
+- Increased client operational efficiency by average of 25%
+
+PROJECTS
+E-Commerce Analytics Dashboard
+- Built comprehensive analytics platform for online retail
+- Integrated data from multiple sources
+- Provides real-time insights on sales and customer behavior
+
+INTERESTS
+Digital Transformation, Business Process Optimization, ERP Systems, Data-Driven Decision Making
+
+---
+
+David Park
+Industrial and Systems Engineering Major | Senior
+Email: dpark@tamu.edu | Phone: (469) 555-0105
+UIN: 678901234
+
+EDUCATION
+Bachelor of Science in Industrial and Systems Engineering
+Texas A&M University | Expected Graduation: May 2025
+GPA: 3.8/4.0
+
+SKILLS
+Programming: Python, R, MATLAB, SQL, VBA
+Optimization: Linear Programming, Simulation, Operations Research
+Analytics: Minitab, Arena, Excel (Expert), Tableau
+Supply Chain: Inventory Management, Demand Forecasting, Logistics
+Quality: Six Sigma Green Belt, Statistical Process Control
+
+EXPERIENCE
+Operations Analyst Intern | Manufacturing Company
+Summer 2024
+- Optimized production scheduling reducing lead time by 20%
+- Performed capacity analysis for 5 production lines
+- Developed simulation models to test process improvements
+- Saved company $150K annually through waste reduction
+
+Research Assistant | Operations Research Lab
+September 2023 - Present
+- Working on optimization algorithms for supply chain networks
+- Analyzing large datasets to identify efficiency opportunities
+
+PROJECTS
+Warehouse Layout Optimization
+- Designed optimal warehouse layout using genetic algorithms
+- Reduced material handling time by 30% in simulation
+- Tools: Python, SimPy, OR-Tools
+
+INTERESTS
+Supply Chain Optimization, Data Analytics, Process Improvement, Operations Management
+
+---
+
+Jessica Williams
+Computer Science Major | Sophomore
+Email: jwilliams@tamu.edu | Phone: (281) 555-0106
+UIN: 789012345
+
+EDUCATION
+Bachelor of Science in Computer Science
+Texas A&M University | Expected Graduation: May 2027
+GPA: 3.9/4.0
+Honors: Presidential Scholar, Dean's Honor Roll
+
+SKILLS
+Programming: Python, Java, C, JavaScript, HTML/CSS
+Web Development: React, Node.js, Express, MongoDB
+Data Science: Pandas, NumPy, Matplotlib, Scikit-learn
+Tools: Git, VS Code, IntelliJ, Jupyter Notebook
+Concepts: Object-Oriented Programming, Data Structures, Algorithms
+
+EXPERIENCE
+Peer Tutor | Computer Science Department
+August 2024 - Present
+- Tutor 15+ students weekly in programming fundamentals
+- Hold office hours and review sessions before exams
+- Developed supplementary learning materials
+
+Software Development Intern | Local Tech Startup
+Summer 2024
+- Contributed to frontend development using React
+- Fixed 25+ bugs and implemented 5 new features
+
+PROJECTS
+Study Group Finder Web App
+- Created platform connecting students for study groups
+- Technologies: React, Firebase, Socket.io
+
+INTERESTS
+Web Development, Artificial Intelligence, Mobile Apps, User Experience Design
+
+---
+
+Brandon Taylor
+Cybersecurity Major | Junior
+Email: btaylor@tamu.edu | Phone: (512) 555-0107
+UIN: 890123456
+
+EDUCATION
+Bachelor of Science in Cybersecurity
+Texas A&M University | Expected Graduation: May 2026
+GPA: 3.5/4.0
+Certifications: CompTIA Network+, Security+ (in progress)
+
+SKILLS
+Security Tools: Wireshark, Nessus, Nmap, John the Ripper, Burp Suite
+Operating Systems: Linux (Ubuntu, Kali), Windows Server, macOS
+Scripting: Python, Bash, PowerShell
+Networking: TCP/IP, Subnetting, VLANs, Routing, Switching
+Cloud Security: AWS Security, Azure Security Center
+
+EXPERIENCE
+Cybersecurity Intern | Financial Services Company
+Summer 2024
+- Monitored security alerts using SIEM platform (Splunk)
+- Investigated 30+ security incidents
+- Assisted with security awareness training for employees
+- Updated security policies and procedures documentation
+
+IT Support Technician | Campus IT Services
+January 2024 - Present
+- Provide technical support for students and faculty
+- Troubleshoot network and security issues
+
+PROJECTS
+Home Network Security Audit
+- Conducted comprehensive security assessment
+- Tools: Nmap, Wireshark, OpenVAS
+
+INTERESTS
+Network Security, Incident Response, Security Operations, Penetration Testing
+
+---
+
+Rachel Kim
+MIS Major | Senior
+Email: rkim@tamu.edu | Phone: (972) 555-0108
+UIN: 901234567
+
+EDUCATION
+Bachelor of Science in Management Information Systems
+Texas A&M University | Expected Graduation: December 2025
+GPA: 3.7/4.0
+Certificate in Business Analytics
+
+SKILLS
+Business Intelligence: Tableau, Power BI, QlikView, Looker
+Database: SQL Server, MySQL, Oracle, Data Modeling
+ETL: Informatica, SSIS, Talend
+Programming: SQL, Python, R, DAX
+Project Management: Agile, Waterfall, JIRA, Confluence
+
+EXPERIENCE
+BI Analyst Intern | Retail Corporation
+Summer 2024
+- Developed 20+ executive dashboards using Tableau
+- Automated reporting processes saving 15 hours weekly
+- Analyzed sales data to identify revenue opportunities
+- Presented insights to senior leadership team
+
+Data Analytics Intern | Marketing Agency
+Summer 2023
+- Analyzed digital marketing campaign performance
+- Created attribution models to track ROI
+- Increased client campaign effectiveness by 30%
+
+PROJECTS
+Student Success Analytics Platform
+- Built analytics platform tracking student performance metrics
+- Integrated data from multiple university systems
+
+INTERESTS
+Business Intelligence, Data Warehousing, Predictive Analytics, Digital Marketing Analytics
+
+---
+
+Christopher Lee
+Computer Science Major | Senior
+Email: clee@tamu.edu | Phone: (210) 555-0109
+UIN: 012345678
+
+EDUCATION
+Bachelor of Science in Computer Science
+Texas A&M University | Expected Graduation: May 2025
+GPA: 3.6/4.0
+Focus Area: Software Engineering
+
+SKILLS
+Languages: Java, Python, JavaScript, TypeScript, C#, SQL
+Frameworks: Spring Boot, Django, .NET Core, React, Vue.js
+Mobile: React Native, Flutter, Android Studio
+Testing: JUnit, Jest, Selenium, Pytest
+Databases: PostgreSQL, MongoDB, MySQL, Firebase
+
+EXPERIENCE
+Software Engineering Intern | Enterprise Software Company
+Summer 2024
+- Developed features for enterprise CRM platform
+- Wrote unit tests achieving 95% code coverage
+- Participated in code reviews and design discussions
+- Improved application performance by 40% through optimization
+
+Backend Developer | Student Organization
+September 2023 - Present
+- Built REST APIs for campus event management system
+- Designed database schema for efficient data access
+
+PROJECTS
+Food Delivery App
+- Created full-stack mobile app for campus food delivery
+- Technologies: React Native, Node.js, Express, MongoDB, Stripe
+
+INTERESTS
+Software Architecture, Backend Development, Mobile Development, API Design
+
+---
+
+Amanda Garcia
+Statistics Major | Junior
+Email: agarcia@tamu.edu | Phone: (956) 555-0110
+UIN: 123456780
+
+EDUCATION
+Bachelor of Science in Statistics
+Texas A&M University | Expected Graduation: May 2026
+GPA: 3.9/4.0
+Minor in Mathematics
+
+SKILLS
+Statistical Software: R, SAS, SPSS, Stata, Python
+Programming: Python, R, SQL, MATLAB
+Data Science: Machine Learning, Regression Analysis, Time Series, Hypothesis Testing
+Visualization: ggplot2, Plotly, Seaborn, Tableau
+Tools: Jupyter, RStudio, Git, LaTeX
+
+EXPERIENCE
+Data Science Intern | Research Institute
+Summer 2024
+- Conducted statistical analysis on healthcare datasets (10,000+ records)
+- Built predictive models for patient outcomes
+- Visualized results for non-technical stakeholders
+- Published findings in research report
+
+Statistical Consultant | Stats Consulting Lab
+January 2024 - Present
+- Provide statistical consulting to faculty and students
+- Design experiments and analyze research data
+
+PROJECTS
+Predictive Modeling for Customer Churn
+- Built classification models to predict customer churn
+- Achieved 88% accuracy on test set
+
+INTERESTS
+Machine Learning, Biostatistics, Experimental Design, Data Visualization
+
+---
+
+Kevin Nguyen
+Industrial and Systems Engineering Major | Junior
+Email: knguyen@tamu.edu | Phone: (713) 555-0111
+UIN: 234567891
+
+EDUCATION
+Bachelor of Science in Industrial and Systems Engineering
+Texas A&M University | Expected Graduation: May 2026
+GPA: 3.7/4.0
+
+SKILLS
+Programming: Python, SQL, MATLAB, VBA, R
+Optimization: Linear Programming, Integer Programming, Network Optimization
+Simulation: Arena, SimPy, AnyLogic
+Analytics: Excel (Advanced), Minitab, JMP, Tableau
+Lean/Six Sigma: Green Belt Certified
+
+EXPERIENCE
+Supply Chain Analyst Intern | Logistics Company
+Summer 2024
+- Analyzed transportation networks to optimize delivery routes
+- Reduced shipping costs by 18% through route optimization
+- Created dashboards for real-time logistics monitoring
+- Developed inventory forecasting models
+
+Operations Intern | Manufacturing Plant
+Summer 2023
+- Conducted time-motion studies to identify bottlenecks
+- Implemented lean manufacturing principles
+
+PROJECTS
+Healthcare Clinic Optimization
+- Analyzed patient flow in university health clinic
+- Used discrete event simulation to test improvements
+
+INTERESTS
+Operations Research, Supply Chain Management, Data-Driven Decision Making, Process Optimization
+
+---
+
+Olivia Thompson
+MIS Major | Sophomore
+Email: othompson@tamu.edu | Phone: (817) 555-0112
+UIN: 345678902
+
+EDUCATION
+Bachelor of Science in Management Information Systems
+Texas A&M University | Expected Graduation: May 2027
+GPA: 3.8/4.0
+
+SKILLS
+Business Applications: Salesforce, Microsoft 365, Google Workspace, Slack
+Web Technologies: HTML, CSS, JavaScript, WordPress, Wix
+Data Analysis: Excel, SQL, Tableau, Basic Python
+Digital Marketing: Google Analytics, SEO, Social Media Marketing
+Communication: Technical Writing, Presentation Skills, Stakeholder Management
+
+EXPERIENCE
+IT Intern | Non-Profit Organization
+Summer 2024
+- Managed organization's website and social media presence
+- Implemented new donor management system (Salesforce)
+- Created training documentation for staff
+- Improved online donation process increasing conversions by 40%
+
+Student IT Support | Residence Life
+August 2023 - Present
+- Provide technical support to students in residence halls
+- Troubleshoot network connectivity issues
+
+PROJECTS
+Small Business Website
+- Designed and built website for local small business
+- Technologies: WordPress, WooCommerce, custom CSS
+
+INTERESTS
+Digital Marketing, User Experience Design, Business Technology, E-Commerce
+
+---
+
+Daniel Martinez
+Cybersecurity Major | Senior
+Email: dmartinez@tamu.edu | Phone: (361) 555-0113
+UIN: 456789013
+
+EDUCATION
+Bachelor of Science in Cybersecurity
+Texas A&M University | Expected Graduation: December 2025
+GPA: 3.6/4.0
+Certifications: CCNA, CompTIA Security+, GIAC GSEC
+
+SKILLS
+Security: SIEM (Splunk, QRadar), IDS/IPS, Firewall Management, SOC Operations
+Incident Response: Forensics, Malware Analysis, Threat Hunting
+Tools: Wireshark, Snort, Suricata, TheHive, MISP, ELK Stack
+Cloud Security: AWS Security, Azure Sentinel, CloudTrail
+Programming: Python, Bash, PowerShell, Go
+
+EXPERIENCE
+Security Operations Intern | Managed Security Services Provider
+Summer 2024
+- Monitored security events for 50+ client environments
+- Investigated and responded to 100+ security incidents
+- Created detection rules for new threat indicators
+- Documented incident response procedures
+
+Cybersecurity Research Assistant | University Lab
+January 2024 - Present
+- Research machine learning for threat detection
+- Analyzing malware samples in isolated environment
+
+PROJECTS
+Threat Intelligence Platform
+- Built platform for aggregating threat intelligence feeds
+- Integrates with MISP and other open-source feeds
+
+INTERESTS
+Security Operations, Threat Intelligence, Incident Response, Security Automation
+
+---
+
+Sophia Anderson
+Computer Science Major | Junior
+Email: sanderson@tamu.edu | Phone: (254) 555-0114
+UIN: 567890124
+
+EDUCATION
+Bachelor of Science in Computer Science
+Texas A&M University | Expected Graduation: May 2026
+GPA: 3.8/4.0
+Focus: Artificial Intelligence and Machine Learning
+
+SKILLS
+Languages: Python, Java, C++, R, JavaScript
+ML/AI: TensorFlow, PyTorch, Keras, Scikit-learn, OpenCV
+Data Science: Pandas, NumPy, Matplotlib, Seaborn, Jupyter
+Cloud: AWS SageMaker, Google Cloud AI, Azure ML
+Tools: Git, Docker, Linux, Anaconda
+
+EXPERIENCE
+Machine Learning Intern | AI Research Company
+Summer 2024
+- Developed computer vision models for object detection
+- Improved model accuracy by 15% through hyperparameter tuning
+- Deployed models to production using AWS SageMaker
+- Collaborated with research team on NLP projects
+
+AI Research Assistant | CS Department
+September 2023 - Present
+- Working on deep learning project for medical image analysis
+- Training convolutional neural networks on large datasets
+
+PROJECTS
+Sentiment Analysis API
+- Built REST API for sentiment analysis of text
+- Uses fine-tuned BERT model achieving 92% accuracy
+
+INTERESTS
+Machine Learning, Computer Vision, Natural Language Processing, Deep Learning
+
+---
+
+Ryan Hall
+Statistics Major | Senior
+Email: rhall@tamu.edu | Phone: (325) 555-0115
+UIN: 678901235
+
+EDUCATION
+Bachelor of Science in Statistics
+Texas A&M University | Expected Graduation: May 2025
+GPA: 3.7/4.0
+Minor in Computer Science
+
+SKILLS
+Statistical Methods: Regression, ANOVA, Time Series, Survival Analysis, Bayesian Statistics
+Software: R, Python, SAS, SPSS, Stata, SQL
+Machine Learning: Classification, Clustering, Ensemble Methods
+Visualization: R Shiny, Plotly, Tableau, ggplot2
+Programming: R, Python, SQL, LaTeX
+
+EXPERIENCE
+Data Analyst Intern | Insurance Company
+Summer 2024
+- Built actuarial models for risk assessment
+- Analyzed claims data to identify fraud patterns
+- Created interactive dashboards for management
+- Improved fraud detection rate by 20%
+
+Statistical Analyst | Agricultural Research Center
+Summer 2023
+- Designed and analyzed agricultural experiments
+- Performed statistical analysis using R and SAS
+
+PROJECTS
+Sports Analytics Dashboard
+- Developed analytics platform for college basketball
+- Technologies: R Shiny, Python, Web scraping
+
+INTERESTS
+Data Science, Predictive Analytics, Statistical Modeling, Sports Analytics
+
+---
+
+Madison White
+MIS Major | Junior
+Email: mwhite@tamu.edu | Phone: (409) 555-0116
+UIN: 789012346
+
+EDUCATION
+Bachelor of Science in Management Information Systems
+Texas A&M University | Expected Graduation: December 2026
+GPA: 3.6/4.0
+
+SKILLS
+ERP Systems: SAP (FI/CO, MM, SD), Oracle NetSuite, Microsoft Dynamics
+CRM: Salesforce (Admin Certified), HubSpot, Zoho CRM
+Analytics: SQL, Python, Power BI, Tableau, Excel (Advanced)
+Process Management: BPMN, Process Mining, Workflow Automation
+Project Management: Agile, Scrum, MS Project, Smartsheet
+
+EXPERIENCE
+ERP Analyst Intern | Manufacturing Company
+Summer 2024
+- Supported SAP implementation for supply chain module
+- Conducted user training sessions for 50+ employees
+- Created standard operating procedures and documentation
+- Assisted with data migration and validation
+
+Business Systems Analyst | Student Co-op
+January 2024 - Present
+- Analyze business requirements for system enhancements
+- Work with stakeholders to prioritize feature requests
+
+PROJECTS
+Business Process Automation
+- Automated invoice processing workflow using Power Automate
+- Reduced processing time from 2 days to 2 hours
+
+INTERESTS
+Enterprise Systems, Business Process Management, Digital Transformation, Change Management
+
+---
+
+Ethan Brown
+Computer Science Major | Senior
+Email: ebrown@tamu.edu | Phone: (830) 555-0117
+UIN: 890123457
+
+EDUCATION
+Bachelor of Science in Computer Science
+Texas A&M University | Expected Graduation: May 2025
+GPA: 3.5/4.0
+Focus: Computer Networks and Security
+
+SKILLS
+Programming: C, C++, Python, Java, Go, Rust
+Networking: TCP/IP, BGP, OSPF, SDN, Network Programming
+Security: Cryptography, Secure Coding, Penetration Testing
+Systems: Linux, Windows Server, Virtualization (KVM, VMware)
+Tools: Wireshark, GNS3, Cisco Packet Tracer, Git
+
+EXPERIENCE
+Network Engineering Intern | ISP Company
+Summer 2024
+- Configured and maintained network infrastructure
+- Troubleshot connectivity issues for enterprise clients
+- Implemented network monitoring using Nagios
+- Participated in network capacity planning
+
+Systems Administrator | University Data Center
+September 2023 - Present
+- Maintain Linux servers for research computing
+- Manage user accounts and access permissions
+
+PROJECTS
+Custom Network Protocol
+- Designed and implemented custom application protocol
+- Built client-server application using sockets in C
+
+INTERESTS
+Computer Networks, Network Security, Distributed Systems, Systems Programming
+
+---
+
+Isabella Davis
+Industrial and Systems Engineering Major | Senior
+Email: idavis@tamu.edu | Phone: (432) 555-0118
+UIN: 901234568
+
+EDUCATION
+Bachelor of Science in Industrial and Systems Engineering
+Texas A&M University | Expected Graduation: December 2025
+GPA: 3.9/4.0
+Six Sigma Black Belt Certified
+
+SKILLS
+Process Improvement: Lean, Six Sigma, Kaizen, Value Stream Mapping
+Analytics: Python, R, SQL, Minitab, JMP, Advanced Excel
+Simulation: Arena, Simio, Discrete Event Simulation
+Project Management: PMP Fundamentals, MS Project, Agile
+Quality Management: SPC, DOE, Root Cause Analysis
+
+EXPERIENCE
+Process Improvement Intern | Aerospace Company
+Summer 2024
+- Led 3 Lean Six Sigma projects saving $200K annually
+- Reduced manufacturing defects by 45% through DMAIC methodology
+- Trained 20+ employees on lean principles
+- Presented results to executive leadership
+
+Operations Analyst | University Operations
+January 2024 - Present
+- Analyze campus operational processes for improvement opportunities
+- Created simulation models for facilities planning
+
+PROJECTS
+Hospital Emergency Department Optimization
+- Senior capstone project for local hospital
+- Used simulation to test staffing and process changes
+
+INTERESTS
+Process Excellence, Quality Management, Healthcare Operations, Data Analytics
+
+---
+
+Nathan Wilson
+Cybersecurity Major | Sophomore
+Email: nwilson@tamu.edu | Phone: (806) 555-0119
+UIN: 012345679
+
+EDUCATION
+Bachelor of Science in Cybersecurity
+Texas A&M University | Expected Graduation: May 2027
+GPA: 3.8/4.0
+HS: National Cyber Scholar
+
+SKILLS
+Security Fundamentals: CIA Triad, Risk Management, Security Frameworks
+Tools: Kali Linux, Metasploit, Wireshark, Nmap, Burp Suite
+Programming: Python, Bash, Basic Java, HTML/CSS/JavaScript
+Operating Systems: Linux (Ubuntu, Kali, CentOS), Windows 10/11
+Networking: TCP/IP, Subnetting, OSI Model, Basic Routing
+
+EXPERIENCE
+Cybersecurity Club Member | University Organization
+August 2023 - Present
+- Participate in weekly CTF challenges and competitions
+- Placed top 20 in regional CTF competition
+- Learn penetration testing and security analysis techniques
+
+IT Student Worker | Campus Library
+January 2024 - Present
+- Provide technical support to students and staff
+- Maintain computer lab equipment
+
+PROJECTS
+Home Lab Security Environment
+- Built home lab for practicing security skills
+- Set up virtual machines with intentionally vulnerable systems
+
+INTERESTS
+Ethical Hacking, Application Security, Cryptography, CTF Competitions
+
+---
+
+Grace Martinez
+Statistics Major | Sophomore
+Email: gmartinez@tamu.edu | Phone: (915) 555-0120
+UIN: 123456781
+
+EDUCATION
+Bachelor of Science in Statistics
+Texas A&M University | Expected Graduation: May 2027
+GPA: 4.0/4.0
+Honors: Presidential Scholar, Dean's List
+
+SKILLS
+Statistical Software: R, Python, Basic SAS
+Programming: Python, R, SQL, MATLAB
+Mathematics: Calculus, Linear Algebra, Probability Theory
+Data Analysis: Exploratory Data Analysis, Hypothesis Testing, Regression
+Tools: RStudio, Jupyter Notebook, Git, LaTeX, Excel
+
+EXPERIENCE
+Undergraduate Research Assistant | Statistics Department
+September 2024 - Present
+- Assisting professor with research on environmental statistics
+- Learning advanced statistical methods and data analysis
+- Analyzing climate data and creating visualizations
+
+Math/Stats Tutor | Learning Center
+August 2024 - Present
+- Tutor students in calculus, statistics, and probability
+- Hold regular study sessions and review workshops
+
+PROJECTS
+COVID-19 Data Analysis
+- Analyzed COVID-19 trends using publicly available data
+- Created interactive visualizations showing case trends
+
+INTERESTS
+Data Science, Statistical Learning, Data Visualization, Research Methods

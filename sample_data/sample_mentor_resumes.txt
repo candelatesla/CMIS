@@ -1,0 +1,573 @@
+Sarah Johnson
+Senior Software Engineer | Tech Solutions Corp
+Email: sarah.johnson@techsolutions.com | LinkedIn: linkedin.com/in/sarahjohnson
+
+PROFESSIONAL SUMMARY
+Experienced software engineer with 8+ years in full-stack development, 
+specializing in cloud architecture and scalable systems. Passionate about 
+mentoring junior developers and giving back to the tech community.
+
+EXPERIENCE
+
+Senior Software Engineer | Tech Solutions Corp
+January 2020 - Present
+- Lead development team of 5 engineers building enterprise SaaS platform
+- Architected microservices infrastructure serving 1M+ users
+- Mentor junior engineers and conduct technical interviews
+- Technologies: Python, Go, React, Kubernetes, AWS
+
+Software Engineer | Digital Innovations LLC
+June 2016 - December 2019
+- Developed cloud-based analytics platform processing 10TB+ data daily
+- Implemented machine learning pipelines for predictive analytics
+- Collaborated with product team to deliver customer-focused features
+- Technologies: Python, TensorFlow, Apache Spark, Google Cloud
+
+EDUCATION
+Master of Science in Computer Science | Stanford University | 2016
+Bachelor of Science in Computer Science | UC Berkeley | 2014
+
+EXPERTISE AREAS
+- Software Architecture & System Design
+- Cloud Computing (AWS, GCP, Azure)
+- Machine Learning & Data Science
+- Full-Stack Web Development
+- DevOps & CI/CD
+- Technical Leadership
+
+CERTIFICATIONS
+- AWS Solutions Architect Professional
+- Google Cloud Professional Data Engineer
+- Certified Kubernetes Administrator (CKA)
+
+MENTORING EXPERIENCE
+- Mentored 10+ junior engineers through company mentorship program
+- Guest lecturer at local university for Software Engineering course
+- Active contributor to open-source projects
+
+INDUSTRIES
+Technology, Financial Services, Healthcare
+
+AVAILABILITY
+Available for mentoring sessions on weekends and weekday evenings.
+Preferred format: Virtual meetings, occasional in-person when possible.
+
+---
+
+Michael Chen
+Product Manager | FinTech Innovations
+Email: michael.chen@fintechinnovations.com
+
+PROFESSIONAL SUMMARY
+Product manager with 6 years of experience in fintech and banking technology.
+Background in computer science with strong technical knowledge. Enjoy helping
+students understand product management career paths.
+
+EXPERIENCE
+
+Senior Product Manager | FinTech Innovations
+March 2021 - Present
+- Lead product strategy for digital banking platform (500K+ users)
+- Manage cross-functional team of engineers, designers, and analysts
+- Launched 3 major features increasing user engagement by 35%
+- Work closely with C-suite on company vision and roadmap
+
+Product Manager | Banking Corp
+July 2018 - February 2021
+- Owned mobile banking app product development
+- Conducted user research and data analysis to drive decisions
+- Collaborated with engineering teams on technical implementation
+
+Software Engineer | Tech Startup
+June 2016 - June 2018
+- Full-stack development for financial technology platform
+- Transitioned from engineering to product management role
+
+EDUCATION
+Bachelor of Science in Computer Science | MIT | 2016
+MBA Candidate | Harvard Business School | Expected 2026 (Part-time)
+
+EXPERTISE AREAS
+- Product Management & Strategy
+- Financial Technology (FinTech)
+- User Experience Design
+- Data Analytics & Metrics
+- Agile Development
+- Technical Communication
+
+SKILLS
+Technical: Python, SQL, APIs, System Architecture
+Product: Jira, Figma, Analytics tools, A/B Testing
+Business: Market Analysis, Go-to-Market Strategy
+
+MENTORING INTERESTS
+- Students interested in product management careers
+- Computer science students considering non-engineering paths
+- Career transitions from engineering to product
+
+AVAILABILITY
+Bi-weekly meetings preferred, flexible schedule on weekday evenings.
+
+---
+
+Dr. Emily Rodriguez
+Director of Data Science | AI Research Labs
+Email: emily.rodriguez@airesearchlabs.com
+
+PROFESSIONAL SUMMARY
+Data science leader with PhD in Machine Learning and 10 years of industry experience.
+Passionate about advancing AI education and helping students enter the field.
+
+EXPERIENCE
+
+Director of Data Science | AI Research Labs
+January 2019 - Present
+- Lead team of 15 data scientists and ML engineers
+- Oversee development of AI products in healthcare and finance
+- Published 12 research papers in top-tier conferences
+- Manage $5M annual research budget
+
+Senior Data Scientist | Tech Giant Corp
+June 2014 - December 2018
+- Built recommendation systems serving 100M+ users
+- Developed deep learning models for computer vision applications
+- Mentored junior data scientists and interns
+
+EDUCATION
+PhD in Machine Learning | Carnegie Mellon University | 2014
+MS in Computer Science | Carnegie Mellon University | 2010
+BS in Mathematics | University of Chicago | 2008
+
+EXPERTISE AREAS
+- Machine Learning & Deep Learning
+- Natural Language Processing
+- Computer Vision
+- Big Data Analytics
+- Research Methodology
+- AI Ethics & Responsible AI
+
+PUBLICATIONS
+15+ peer-reviewed papers in ML/AI conferences (NeurIPS, ICML, CVPR)
+Regular speaker at industry conferences and academic workshops
+
+MENTORING PHILOSOPHY
+Believe in hands-on learning and real-world project experience.
+Help students develop both technical skills and professional soft skills.
+
+MENTORING CAPACITY
+Currently mentoring 2 students, open to 1-2 more mentees.
+Prefer students seriously interested in AI/ML research or applied ML careers.
+
+AVAILABILITY
+Monthly meetings with flexibility for additional check-ins via email/Slack.
+
+---
+
+Robert Martinez
+VP of Marketing | Global Consumer Brands
+Email: robert.martinez@globalbrands.com
+
+PROFESSIONAL SUMMARY
+Marketing executive with 12+ years driving brand strategy and growth initiatives.
+Experience spanning CPG, technology, and retail sectors. Love helping students
+navigate marketing careers and build professional networks.
+
+EXPERIENCE
+
+Vice President of Marketing | Global Consumer Brands
+June 2019 - Present
+- Lead marketing strategy for $500M product portfolio
+- Manage team of 25 marketing professionals across brand, digital, and analytics
+- Launched 5 successful product lines generating $100M+ revenue
+- Oversee $50M annual marketing budget
+
+Senior Marketing Director | Tech Products Inc.
+March 2015 - May 2019
+- Directed go-to-market strategy for B2B SaaS products
+- Grew customer base from 200 to 2,000+ enterprise clients
+- Built marketing team from 3 to 15 members
+- Increased brand awareness by 300% through integrated campaigns
+
+Marketing Manager | Retail Corporation
+July 2011 - February 2015
+- Managed brand marketing for regional retail chain
+- Developed customer loyalty programs increasing retention 25%
+- Led digital transformation of marketing department
+
+EDUCATION
+MBA in Marketing | Northwestern University (Kellogg) | 2011
+BA in Communications | University of Texas at Austin | 2009
+
+EXPERTISE AREAS
+- Brand Strategy & Positioning
+- Digital Marketing & Analytics
+- Product Marketing & Launches
+- Marketing Team Leadership
+- Consumer Insights & Research
+- B2B and B2C Marketing
+
+CERTIFICATIONS
+- Google Analytics Certified
+- HubSpot Inbound Marketing Certified
+- Facebook Blueprint Certified
+
+MENTORING FOCUS
+- Marketing career development and strategy
+- Personal branding and networking
+- Navigating corporate environments
+- Business school preparation
+
+INDUSTRIES COVERED
+Consumer Goods, Technology/SaaS, Retail, E-commerce
+
+AVAILABILITY
+Monthly virtual meetings, responsive via LinkedIn messages.
+Happy to provide resume reviews and interview preparation.
+
+---
+
+Jennifer Wu
+Chief Financial Officer | Venture Capital Firm
+Email: jennifer.wu@vcfirm.com
+
+PROFESSIONAL SUMMARY
+Finance executive with 15 years in corporate finance, investment banking, and venture capital.
+CFA charterholder passionate about financial education and helping students build careers in finance.
+
+EXPERIENCE
+
+Chief Financial Officer | Venture Capital Firm
+January 2020 - Present
+- Oversee financial operations for $800M venture capital fund
+- Manage portfolio company financial due diligence
+- Lead fundraising efforts for new fund formation
+- Advise 20+ portfolio companies on financial strategy
+
+Managing Director | Investment Bank
+June 2014 - December 2019
+- Led M&A advisory practice for technology sector
+- Closed 30+ transactions totaling $5B+ in deal value
+- Managed team of 8 analysts and associates
+- Built relationships with C-suite executives and board members
+
+Vice President, Corporate Development | Fortune 500 Tech Company
+September 2010 - May 2014
+- Led strategic acquisitions and partnerships
+- Evaluated 100+ potential acquisition targets
+- Integrated 5 acquired companies into parent organization
+- Managed $500M acquisition budget
+
+EDUCATION
+MBA in Finance | University of Pennsylvania (Wharton) | 2010
+BS in Economics | Yale University | 2006
+
+EXPERTISE AREAS
+- Corporate Finance & Financial Planning
+- Mergers & Acquisitions
+- Venture Capital & Private Equity
+- Financial Modeling & Valuation
+- Strategic Planning
+- Board Advisory
+
+CERTIFICATIONS & MEMBERSHIPS
+- CFA Charterholder
+- Member, CFA Institute
+- Board Member, Financial Women's Association
+
+MENTORING APPROACH
+Focus on practical skills: financial modeling, valuation, networking.
+Help students understand different finance career paths and make informed decisions.
+Provide industry connections and internship referrals when possible.
+
+MENTORING AVAILABILITY
+Currently mentoring 3 students, capacity for 1-2 more.
+Prefer students seriously pursuing finance careers (banking, PE, VC, corporate finance).
+
+AVAILABILITY
+Quarterly in-person meetings in NYC, monthly video calls, email support as needed.
+
+---
+
+Thomas Anderson
+Principal Cloud Architect | Amazon Web Services
+Email: thomas.anderson@aws.com
+
+PROFESSIONAL SUMMARY
+Principal architect with 15+ years designing and implementing cloud-native solutions
+at enterprise scale. Deep expertise in AWS, distributed systems, and cloud migration
+strategies. Passionate about teaching cloud architecture principles to next-generation
+technologists and helping organizations achieve cloud transformation success.
+
+EXPERIENCE
+
+Principal Cloud Architect | Amazon Web Services
+March 2018 - Present
+- Lead architecture design for Fortune 100 enterprise cloud migrations
+- Architected solutions processing 500M+ daily transactions with 99.99% uptime
+- Technical advisor for $50M+ cloud transformation projects
+- Mentor cloud architects across AWS partner ecosystem
+- Speaker at AWS re:Invent, AWS Summit, and customer events
+- Technologies: AWS (EC2, Lambda, S3, RDS, DynamoDB, EKS), Terraform, CloudFormation
+
+Senior Solutions Architect | Microsoft Azure
+June 2013 - February 2018
+- Designed hybrid cloud architectures for global enterprises
+- Led technical pre-sales for strategic accounts ($10M+ ARR)
+- Built reference architectures for financial services and healthcare
+- Technologies: Azure, ARM Templates, PowerShell, Kubernetes
+
+Cloud Engineer | Rackspace
+January 2010 - May 2013
+- Implemented cloud infrastructure for managed hosting clients
+- Automated deployment pipelines reducing release time by 70%
+- On-call support for mission-critical production systems
+
+EDUCATION
+Master of Science in Computer Science | University of Texas at Austin | 2009
+Bachelor of Science in Computer Engineering | Georgia Tech | 2007
+
+EXPERTISE AREAS
+- Cloud Architecture Design (AWS, Azure, GCP)
+- Distributed Systems & Microservices
+- Infrastructure as Code (Terraform, CloudFormation)
+- Container Orchestration (Kubernetes, ECS, EKS)
+- Cloud Security & Compliance
+- DevOps & Site Reliability Engineering
+- Cloud Cost Optimization
+- Technical Strategy & Roadmapping
+
+CERTIFICATIONS
+- AWS Certified Solutions Architect - Professional
+- AWS Certified Security - Specialty
+- Azure Solutions Architect Expert
+- Google Cloud Professional Cloud Architect
+- Certified Kubernetes Administrator (CKA)
+- TOGAF Enterprise Architecture Certified
+
+MENTORING FOCUS
+Cloud architecture career paths, AWS certification prep, distributed systems design,
+technical leadership skills, navigating from engineer to architect roles.
+
+AVAILABILITY
+Monthly virtual sessions, responsive via LinkedIn/email for career advice.
+
+---
+
+Priya Sharma
+Director of Cybersecurity | Cisco Systems
+Email: priya.sharma@cisco.com
+
+PROFESSIONAL SUMMARY
+Cybersecurity executive with 18+ years protecting enterprise networks, cloud
+infrastructure, and critical systems. Led security operations for Fortune 500
+companies and government agencies. Advocate for security awareness and building
+diverse cybersecurity teams. Active mentor helping students break into infosec careers.
+
+EXPERIENCE
+
+Director of Cybersecurity | Cisco Systems
+January 2019 - Present
+- Lead global security operations center (SOC) with 50+ security analysts
+- Oversee threat intelligence, incident response, and vulnerability management
+- Reduced security incidents by 60% through proactive threat hunting
+- Budget authority for $25M security technology portfolio
+- Executive briefings on security posture and risk management
+- Technologies: SIEM, EDR, SOAR, Zero Trust Architecture, Cloud Security
+
+Senior Security Architect | Deloitte Cyber Risk Services
+July 2012 - December 2018
+- Designed enterprise security architectures for Fortune 500 clients
+- Led penetration testing and red team engagements
+- Implemented zero-trust security models for cloud environments
+- Advised C-suite on cybersecurity strategy and risk management
+- Managed team of 12 security consultants
+
+Information Security Engineer | Department of Defense Contractor
+June 2007 - June 2012
+- Security engineering for classified government systems
+- Performed security assessments and compliance audits (NIST, FISMA)
+- Developed security automation tools and hardening scripts
+- Top Secret/SCI security clearance
+
+EDUCATION
+Master of Science in Information Security | Carnegie Mellon University | 2007
+Bachelor of Science in Computer Science | University of Maryland | 2005
+
+EXPERTISE AREAS
+- Enterprise Security Architecture
+- Cloud Security (AWS, Azure, GCP)
+- Zero Trust Security Models
+- Threat Intelligence & Incident Response
+- Security Operations Center (SOC) Management
+- Network Security & Firewalls
+- Identity & Access Management (IAM)
+- Security Compliance (SOC 2, ISO 27001, NIST)
+- Application Security & Secure SDLC
+- Security Risk Management
+
+CERTIFICATIONS
+- CISSP (Certified Information Systems Security Professional)
+- CISM (Certified Information Security Manager)
+- OSCP (Offensive Security Certified Professional)
+- AWS Certified Security - Specialty
+- GIAC Security Expert (GSE)
+
+MENTORING PHILOSOPHY
+Security is about people, not just technology. Help students understand both
+technical skills and soft skills needed for cybersecurity careers. Focus on
+building diverse, inclusive security teams.
+
+MENTORING CAPACITY
+Currently mentoring 4 students, open to 2 more. Especially interested in
+helping women and underrepresented minorities enter cybersecurity.
+
+AVAILABILITY
+Bi-weekly virtual meetings, monthly group mentoring sessions, career coaching.
+
+---
+
+Marcus Williams
+Lead Data Scientist | Google
+Email: marcus.williams@google.com
+
+PROFESSIONAL SUMMARY
+Data science leader with 12+ years applying machine learning to solve complex
+business problems at scale. Expert in building ML platforms, deploying production
+models, and leading data science teams. Passionate about democratizing AI/ML
+education and mentoring aspiring data scientists from diverse backgrounds.
+
+EXPERIENCE
+
+Lead Data Scientist | Google
+June 2018 - Present
+- Lead team of 10 data scientists building ML-powered products
+- Deployed recommendation systems serving 100M+ users with <50ms latency
+- Built AutoML platform reducing model development time by 80%
+- Developed NLP models for content understanding and classification
+- Collaborate with product, engineering, and research teams
+- Technologies: TensorFlow, PyTorch, BigQuery, Vertex AI, Python, Scala
+
+Senior Data Scientist | Netflix
+March 2015 - May 2018
+- Built personalization algorithms for content recommendations
+- A/B testing and experimentation for product features
+- Developed computer vision models for video analysis
+- Scaled ML pipelines processing 1PB+ daily data
+- Technologies: Python, Spark, AWS, TensorFlow
+
+Data Scientist | Zillow
+August 2012 - February 2015
+- Created predictive models for home price estimation (Zestimate)
+- Built automated valuation models using gradient boosting
+- Feature engineering from real estate and economic datasets
+- Reduced prediction error by 15% through model improvements
+
+EDUCATION
+PhD in Statistics | Stanford University | 2012
+MS in Applied Mathematics | UCLA | 2008
+BS in Mathematics | Howard University | 2006
+
+EXPERTISE AREAS
+- Machine Learning & Deep Learning
+- Natural Language Processing (NLP)
+- Computer Vision
+- Recommendation Systems
+- Time Series Forecasting
+- A/B Testing & Experimentation
+- Big Data Engineering (Spark, Hadoop)
+- ML Operations (MLOps)
+- Statistical Modeling
+- Python, R, SQL
+
+CERTIFICATIONS & ACHIEVEMENTS
+- Google Cloud Professional ML Engineer
+- TensorFlow Developer Certificate
+- Published 8 peer-reviewed papers in ML conferences
+- Regular speaker at data science conferences (PyData, Strata, KDD)
+
+MENTORING INTERESTS
+Career transitions into data science, ML interview preparation, building
+ML portfolios, navigating PhD vs. industry, increasing diversity in AI/ML.
+
+MENTORING APPROACH
+Hands-on projects, code reviews, mock interviews, career strategy discussions.
+Help students build both technical depth and business acumen.
+
+AVAILABILITY
+Monthly 1:1 sessions, ad-hoc career guidance via Slack/email, code review on GitHub.
+
+---
+
+Rachel Kim
+VP of Engineering | Salesforce
+Email: rachel.kim@salesforce.com
+
+PROFESSIONAL SUMMARY
+Engineering executive with 20+ years building high-performing teams and delivering
+enterprise software at scale. Led organizations from 10 to 200+ engineers. Expert
+in engineering leadership, organizational design, and technical strategy. Committed
+to developing engineering talent and promoting inclusive engineering cultures.
+
+EXPERIENCE
+
+Vice President of Engineering | Salesforce
+January 2020 - Present
+- Lead engineering organization of 150+ engineers across 12 teams
+- Oversee development of CRM platform components serving 150K+ customers
+- Drive technical strategy and architecture decisions
+- Manage $40M annual engineering budget
+- Champion diversity & inclusion initiatives, increased women engineers by 40%
+- Established engineering career ladder and promotion framework
+- Technologies: Java, React, Heroku, AWS, Microservices
+
+Senior Director of Engineering | Adobe
+March 2014 - December 2019
+- Built and scaled engineering team from 30 to 100+ engineers
+- Led development of Creative Cloud services and collaboration tools
+- Implemented DevOps practices reducing deployment time by 75%
+- Established engineering excellence programs and mentorship culture
+- Managed geographically distributed teams across 3 continents
+
+Engineering Manager | Oracle
+June 2009 - February 2014
+- Managed team of 15 engineers building database management tools
+- Delivered 4 major product releases on time and within budget
+- Improved team velocity by 50% through agile transformation
+- Mentored 5 engineers promoted to senior positions
+
+Software Engineer | IBM
+July 2005 - May 2009
+- Full-stack development for enterprise software products
+- Contributed to open-source projects (Apache, Eclipse)
+- Led technical design for client-facing features
+
+EDUCATION
+MS in Computer Science | MIT | 2005
+BS in Electrical Engineering | UC Berkeley | 2003
+
+EXPERTISE AREAS
+- Engineering Leadership & Management
+- Technical Strategy & Architecture
+- Team Building & Organizational Design
+- Agile/Scrum Methodologies
+- DevOps & Software Delivery
+- Engineering Hiring & Talent Development
+- Diversity & Inclusion in Tech
+- Technical Product Management
+- Stakeholder Management
+- Executive Communication
+
+LEADERSHIP PHILOSOPHY
+Build trust, empower teams, focus on outcomes over output. Create psychological
+safety where engineers can learn, grow, and do their best work. Lead with empathy
+and authenticity.
+
+MENTORING FOCUS
+Engineering leadership transitions (IC to manager), building high-performing teams,
+navigating organizational politics, women in tech leadership, work-life integration.
+
+MENTORING CAPACITY
+Currently mentoring 5 leaders, capacity for 1-2 more senior engineer/manager mentees.
+
+AVAILABILITY
+Monthly coaching sessions, quarterly leadership workshops, email/Slack support.
