@@ -92,6 +92,27 @@ class StudentService:
             print(f"Error getting student: {str(e)}")
             return None
     
+    def get_student_by_email(self, email: str) -> Optional[Dict[str, Any]]:
+        """
+        Get a student by email
+        
+        Args:
+            email: Student email address
+            
+        Returns:
+            Student dictionary or None
+        """
+        try:
+            student_data = self.collection.find_one({"email": email})
+            
+            if student_data:
+                return self._serialize_document(student_data)
+            return None
+            
+        except Exception as e:
+            print(f"Error getting student by email: {str(e)}")
+            return None
+    
     def update_student(self, student_id: str, updates: Dict[str, Any]) -> Dict[str, Any]:
         """
         Update a student

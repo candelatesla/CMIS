@@ -1,0 +1,4 @@
+student_id,name,email,major,grad_year,interests,skills,resume_text
+TEST001,John Doe,john.doe@test.edu,Computer Science,2026,"AI, Machine Learning, Data Science","Python, TensorFlow, SQL",
+TEST002,Jane Smith,jane.smith@test.edu,Information Systems,2025,"Web Development, Cloud Computing","JavaScript, React, AWS",
+TEST003,Mike Johnson,mike.johnson@test.edu,Cybersecurity,2027,"Security, Networking","Python, Linux, Wireshark",

@@ -1,0 +1,4 @@
+mentor_id,name,email,company,job_title,industry,expertise_areas,interests,max_mentees
+TESTM001,Sarah Williams,sarah.williams@testcorp.com,TestCorp Inc,Senior Software Engineer,Technology,"Software Architecture, Cloud Computing, DevOps","Mentoring, Teaching",5
+TESTM002,Robert Brown,robert.brown@techsolutions.com,Tech Solutions,CTO,Technology,"Leadership, Strategy, AI","Technology Trends, Innovation",3
+TESTM003,Emily Davis,emily.davis@cybersecure.com,CyberSecure Ltd,Security Analyst,Cybersecurity,"Security, Penetration Testing, Risk Management","Security Research, Training",4

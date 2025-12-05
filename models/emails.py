@@ -21,15 +21,17 @@ class EmailLog(BaseModel):
     body: str
     related_match_id: Optional[str] = Field(None, description="Related mentor match ID if applicable")
     planned_send_time: datetime = Field(default_factory=utc_now, description="When email is planned to be sent")
-    status: str = Field(default="pending", description="Email status: pending, sent, failed")
+    actual_send_time: Optional[datetime] = Field(None, description="When email was actually sent")
+    status: str = Field(default="pending", description="Email status: scheduled, sent, failed")
     error_message: Optional[str] = Field(None, description="Error message if sending failed")
+    created_at: datetime = Field(default_factory=utc_now, description="When record was created")
     
-    @field_validator('planned_send_time', mode='before')
+    @field_validator('planned_send_time', 'actual_send_time', 'created_at', mode='before')
     @classmethod
     def ensure_timezone_aware(cls, v):
         """Ensure datetime is timezone-aware UTC"""
         if v is None:
-            return utc_now()
+            return None
         if isinstance(v, datetime) and v.tzinfo is None:
             return v.replace(tzinfo=timezone.utc)
         return v

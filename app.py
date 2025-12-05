@@ -20,6 +20,7 @@ from services.email_service import EmailService
 
 # Utils imports
 from utils.pdf_utils import extract_text_from_pdf, get_random_student_resume, get_random_mentor_resume
+from utils.auth import check_login
 
 
 def init_app():
@@ -30,6 +31,13 @@ def init_app():
         layout="wide",
         initial_sidebar_state="expanded"
     )
+    
+    # Apply TAMU Aggie Theme
+    apply_tamu_theme()
+    
+    # Initialize session state for authentication
+    if "authenticated" not in st.session_state:
+        st.session_state["authenticated"] = False
     
     # Validate configuration
     if not validate_config():
@@ -44,35 +52,157 @@ def init_app():
         st.stop()
 
 
+def apply_tamu_theme():
+    """Apply Texas A&M Aggie Maroon theme to the dashboard"""
+    st.markdown("""
+    <style>
+        /* Sidebar - Aggie Maroon background with white text */
+        [data-testid="stSidebar"] {
+            background-color: #500000 !important;
+        }
+        
+        [data-testid="stSidebar"] * {
+            color: #FFFFFF !important;
+        }
+        
+        /* Main panel - White background with black text */
+        .main,
+        [data-testid="stAppViewContainer"] {
+            background-color: #FFFFFF !important;
+            color: #000000 !important;
+        }
+        
+        /* Main panel titles and headers - Black */
+        .main h1,
+        .main h2,
+        .main h3,
+        .main h4,
+        .main h5,
+        .main h6,
+        .main p{
+            color: #000000 !important;
+        }
+        
+        /* Card-style background for main content */
+        .main .block-container {
+            background-color: #F8F9FA !important;
+            border-radius: 15px !important;
+            padding: 2rem !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        /* Card style for expanders and forms */
+        .stExpander,
+        [data-testid="stExpander"] {
+            background-color: #FFFFFF !important;
+            border-radius: 10px !important;
+            border: 1px solid #E0E0E0 !important;
+            padding: 0.5rem !important;
+            margin-bottom: 1rem !important;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+        }
+        
+        /* Form containers */
+        [data-testid="stForm"] {
+            background-color: #FFFFFF !important;
+            border-radius: 10px !important;
+            padding: 1.5rem !important;
+            border: 1px solid #E0E0E0 !important;
+        }
+        
+        /* Metric cards */
+        [data-testid="stMetric"] {
+            background-color: #FFFFFF !important;
+            border-radius: 10px !important;
+            padding: 1rem !important;
+            border: 1px solid #E0E0E0 !important;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+        }
+        
+        /* Text-only buttons (no background) */
+        button[kind="secondary"] {
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            color: #500000 !important;
+            padding: 0.25rem 0.5rem !important;
+        }
+        
+        button[kind="secondary"]:hover {
+            background-color: rgba(80, 0, 0, 0.05) !important;
+            color: #500000 !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+def render_login_page():
+    """Render the login page"""
+    # Center the login form
+    col1, col2, col3 = st.columns([1, 2, 1])
+    
+    with col2:
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.title("🎓 CMIS Admin Login")
+        st.markdown("---")
+        
+        # Login form
+        with st.form("login_form"):
+            email = st.text_input("Email", placeholder="admin@tamu.edu")
+            password = st.text_input("Password", type="password", placeholder="Enter password")
+            submit = st.form_submit_button("Login", use_container_width=True, type="primary")
+            
+            if submit:
+                if check_login(email, password):
+                    st.session_state["authenticated"] = True
+                    st.session_state["admin_email"] = email
+                    st.rerun()
+                else:
+                    st.error("❌ Invalid email or password. Please try again.")
+        
+        st.markdown("---")
+        st.caption("CMIS Engagement Platform Admin Dashboard")
+
+
 def render_sidebar():
     """Render the sidebar navigation"""
     with st.sidebar:
         st.title("🎓 CMIS Dashboard")
-        st.caption(f"Version {APP_VERSION}")
+
         st.divider()
         
         page = st.radio(
-            "Navigation",
+             "Navigation",
             [
-                "Dashboard",
-                "Students",
-                "Mentors",
-                "Events",
-                "Case Competitions",
-                "Matching",
-                "Email Management"
+                "🗂️ Dashboard",
+                "🎓 Students",
+                "🧑‍🏫 Mentors",
+                "📅 Events",
+                "🏆 Case Competitions",
+                "🤖 Matching",
+                "📨 Email Management"
             ]
         )
         
         st.divider()
         st.caption("Admin Tools")
         
+        # Logout button
+        if st.button("🚪 Logout", use_container_width=True):
+            st.session_state["authenticated"] = False
+            st.session_state.pop("admin_email", None)
+            st.rerun()
+        
+        # Show logged in user
+        if "admin_email" in st.session_state:
+            st.caption(f"Logged in as: {st.session_state['admin_email']}")
+        
         return page
 
 
 def render_dashboard():
     """Render the main dashboard page"""
-    st.title("📊 Dashboard Overview")
+    st.title("Dashboard Overview")
     
     # Initialize services
     student_service = StudentService()
@@ -198,6 +328,125 @@ def render_students_page():
     
     st.divider()
     
+    # Bulk Upload Section
+    with st.expander("📤 Bulk Upload Students (CSV)", expanded=False):
+        st.markdown("""
+        Upload a CSV file to add multiple students at once.
+        
+        **Required CSV columns:**
+        - `student_id`, `name`, `email`, `major`, `grad_year`, `interests`, `skills`, `resume_text`
+        
+        **Notes:**
+        - `interests` and `skills` should be comma-separated values (e.g., "AI, Web Dev, Data Science")
+        - `resume_text` can be empty (will use sample resume)
+        - Students with existing emails will be skipped
+        """)
+        
+        uploaded_csv = st.file_uploader("Upload CSV File", type=["csv"], key="bulk_students_csv")
+        
+        if uploaded_csv is not None:
+            try:
+                # Parse CSV
+                df = pd.read_csv(uploaded_csv)
+                
+                st.write(f"**Found {len(df)} rows in CSV**")
+                st.dataframe(df.head(), use_container_width=True)
+                
+                if st.button("🚀 Process CSV and Import Students", type="primary"):
+                    results = {
+                        "inserted": 0,
+                        "skipped": 0,
+                        "errors": []
+                    }
+                    
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
+                    
+                    for idx, row in df.iterrows():
+                        status_text.text(f"Processing row {idx + 1}/{len(df)}...")
+                        progress_bar.progress((idx + 1) / len(df))
+                        
+                        try:
+                            # Extract fields
+                            student_id = str(row.get('student_id', '')).strip()
+                            name = str(row.get('name', '')).strip()
+                            email = str(row.get('email', '')).strip()
+                            major = str(row.get('major', '')).strip()
+                            grad_year = int(row.get('grad_year', 2026))
+                            
+                            # Parse comma-separated fields
+                            interests_str = str(row.get('interests', ''))
+                            interests = [i.strip() for i in interests_str.split(',') if i.strip()] if interests_str and interests_str != 'nan' else []
+                            
+                            skills_str = str(row.get('skills', ''))
+                            skills = [s.strip() for s in skills_str.split(',') if s.strip()] if skills_str and skills_str != 'nan' else []
+                            
+                            resume_text = str(row.get('resume_text', ''))
+                            if not resume_text or resume_text == 'nan':
+                                # Use sample resume
+                                try:
+                                    resume_text = get_random_student_resume()
+                                except:
+                                    resume_text = ""
+                            
+                            # Validate required fields
+                            if not all([student_id, name, email, major]):
+                                results["errors"].append(f"Row {idx + 1}: Missing required fields")
+                                continue
+                            
+                            # Check if student already exists by email
+                            existing = student_service.get_student_by_email(email)
+                            if existing:
+                                results["skipped"] += 1
+                                continue
+                            
+                            # Create student data
+                            student_data = {
+                                "student_id": student_id,
+                                "name": name,
+                                "email": email,
+                                "major": major,
+                                "grad_year": grad_year,
+                                "gpa": float(row.get('gpa', 3.5)) if 'gpa' in row else 3.5,
+                                "interests": interests,
+                                "skills": skills,
+                                "resume_text": resume_text
+                            }
+                            
+                            # Create student
+                            result = student_service.create_student(student_data)
+                            
+                            if "error" in result:
+                                results["errors"].append(f"Row {idx + 1} ({name}): {result['error']}")
+                            else:
+                                results["inserted"] += 1
+                        
+                        except Exception as e:
+                            results["errors"].append(f"Row {idx + 1}: {str(e)}")
+                    
+                    # Show results
+                    status_text.empty()
+                    progress_bar.empty()
+                    
+                    st.success(f"✅ Import complete!")
+                    st.write(f"**📊 Results:**")
+                    st.write(f"- ✅ Inserted: {results['inserted']}")
+                    st.write(f"- ⏭️ Skipped (already exists): {results['skipped']}")
+                    st.write(f"- ❌ Errors: {len(results['errors'])}")
+                    
+                    if results['errors']:
+                        with st.expander("View Errors"):
+                            for error in results['errors']:
+                                st.write(f"- {error}")
+                    
+                    if results['inserted'] > 0:
+                        st.rerun()
+            
+            except Exception as e:
+                st.error(f"Error parsing CSV: {str(e)}")
+    
+    st.divider()
+    
     # Search and Filter
     col1, col2, col3 = st.columns([3, 1, 1])
     with col1:
@@ -205,7 +454,7 @@ def render_students_page():
     with col2:
         st.write("")  # Spacing
     with col3:
-        if st.button("🔄 Refresh", use_container_width=True):
+        if st.button("🔄 Refresh", type="secondary"):
             st.rerun()
     
     # Get all students
@@ -414,6 +663,131 @@ def render_mentors_page():
                     else:
                         st.success(f"✅ Mentor '{name}' added successfully!")
                         st.rerun()
+    
+    st.divider()
+    
+    # Bulk Upload Section
+    with st.expander("📤 Bulk Upload Mentors (CSV)", expanded=False):
+        st.markdown("""
+        Upload a CSV file to add multiple mentors at once.
+        
+        **Required CSV columns:**
+        - `mentor_id`, `name`, `email`, `company`, `job_title`, `industry`, `expertise_areas`, `interests`, `max_mentees`
+        
+        **Notes:**
+        - `expertise_areas` and `interests` should be comma-separated values (e.g., "Software Architecture, Cloud Computing")
+        - `resume_text` can be empty (will use sample resume)
+        - Mentors with existing emails will be skipped
+        """)
+        
+        uploaded_csv = st.file_uploader("Upload CSV File", type=["csv"], key="bulk_mentors_csv")
+        
+        if uploaded_csv is not None:
+            try:
+                # Parse CSV
+                df = pd.read_csv(uploaded_csv)
+                
+                st.write(f"**Found {len(df)} rows in CSV**")
+                st.dataframe(df.head(), use_container_width=True)
+                
+                if st.button("🚀 Process CSV and Import Mentors", type="primary"):
+                    results = {
+                        "inserted": 0,
+                        "skipped": 0,
+                        "errors": []
+                    }
+                    
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
+                    
+                    for idx, row in df.iterrows():
+                        status_text.text(f"Processing row {idx + 1}/{len(df)}...")
+                        progress_bar.progress((idx + 1) / len(df))
+                        
+                        try:
+                            # Extract fields
+                            mentor_id = str(row.get('mentor_id', '')).strip()
+                            name = str(row.get('name', '')).strip()
+                            email = str(row.get('email', '')).strip()
+                            company = str(row.get('company', '')).strip()
+                            job_title = str(row.get('job_title', '')).strip()
+                            industry = str(row.get('industry', '')).strip()
+                            max_mentees = int(row.get('max_mentees', 3))
+                            
+                            # Parse comma-separated fields
+                            expertise_str = str(row.get('expertise_areas', ''))
+                            expertise_areas = [e.strip() for e in expertise_str.split(',') if e.strip()] if expertise_str and expertise_str != 'nan' else []
+                            
+                            interests_str = str(row.get('interests', ''))
+                            interests = [i.strip() for i in interests_str.split(',') if i.strip()] if interests_str and interests_str != 'nan' else []
+                            
+                            resume_text = str(row.get('resume_text', ''))
+                            if not resume_text or resume_text == 'nan':
+                                # Use sample resume
+                                try:
+                                    resume_text = get_random_mentor_resume()
+                                except:
+                                    resume_text = ""
+                            
+                            # Validate required fields
+                            if not all([mentor_id, name, email, company, job_title, industry]):
+                                results["errors"].append(f"Row {idx + 1}: Missing required fields")
+                                continue
+                            
+                            # Check if mentor already exists by email
+                            existing = mentor_service.get_mentor_by_email(email)
+                            if existing:
+                                results["skipped"] += 1
+                                continue
+                            
+                            # Create mentor data
+                            mentor_data = {
+                                "mentor_id": mentor_id,
+                                "name": name,
+                                "email": email,
+                                "company": company,
+                                "job_title": job_title,
+                                "industry": industry,
+                                "years_experience": int(row.get('years_experience', 5)) if 'years_experience' in row else 5,
+                                "expertise_areas": expertise_areas,
+                                "interests": interests,
+                                "max_mentees": max_mentees,
+                                "current_mentees": 0,
+                                "linkedin_url": str(row.get('linkedin_url', '')) if 'linkedin_url' in row and str(row.get('linkedin_url', '')) != 'nan' else None,
+                                "resume_text": resume_text
+                            }
+                            
+                            # Create mentor
+                            result = mentor_service.create_mentor(mentor_data)
+                            
+                            if "error" in result:
+                                results["errors"].append(f"Row {idx + 1} ({name}): {result['error']}")
+                            else:
+                                results["inserted"] += 1
+                        
+                        except Exception as e:
+                            results["errors"].append(f"Row {idx + 1}: {str(e)}")
+                    
+                    # Show results
+                    status_text.empty()
+                    progress_bar.empty()
+                    
+                    st.success(f"✅ Import complete!")
+                    st.write(f"**📊 Results:**")
+                    st.write(f"- ✅ Inserted: {results['inserted']}")
+                    st.write(f"- ⏭️ Skipped (already exists): {results['skipped']}")
+                    st.write(f"- ❌ Errors: {len(results['errors'])}")
+                    
+                    if results['errors']:
+                        with st.expander("View Errors"):
+                            for error in results['errors']:
+                                st.write(f"- {error}")
+                    
+                    if results['inserted'] > 0:
+                        st.rerun()
+            
+            except Exception as e:
+                st.error(f"Error parsing CSV: {str(e)}")
     
     st.divider()
     
@@ -1112,6 +1486,7 @@ def render_case_competitions_page():
 def render_matching_page():
     """Render the AI matching page"""
     from ai.workflow import WorkflowEngine
+    from ai.email_generation import generate_mentor_outreach_email
     
     st.title("🤖 Mentor Matching (AI)")
     st.markdown("*AI-powered student-mentor matching with automated email outreach*")
@@ -1119,6 +1494,7 @@ def render_matching_page():
     
     # Initialize services
     student_service = StudentService()
+    mentor_service = MentorService()
     match_service = MatchService()
     email_service = EmailService()
     workflow = WorkflowEngine()
@@ -1269,39 +1645,220 @@ def render_matching_page():
             }
         )
         
-        st.caption(f"📊 Total matches: {len(past_matches)}")
+        st.caption(f"Total matches: {len(past_matches)}")
     else:
         st.info("No past matches found for this student.")
+    
+    # Add AI Email Generation Testing Section
+    st.divider()
+    st.subheader("✉️ Test AI Email Generation")
+    st.caption("Preview the refined email generation before running the full workflow")
+    
+    col_test1, col_test2 = st.columns(2)
+    
+    with col_test1:
+        # Student selection for testing
+        test_students = student_service.list_students()
+        if test_students:
+            test_student_options = {f"{s.get('name')} ({s.get('major')})": s.get('_id') 
+                                   for s in test_students}
+            selected_test_student_name = st.selectbox(
+                "Select Student for Test",
+                options=list(test_student_options.keys()),
+                key="test_student_select"
+            )
+            test_student_id = test_student_options[selected_test_student_name]
+            test_student = student_service.get_student_by_id(test_student_id)
+    
+    with col_test2:
+        # Mentor selection for testing
+        test_mentors = mentor_service.list_mentors()
+        if test_mentors:
+            test_mentor_options = {f"{m.get('name')} ({m.get('company')})": m.get('_id') 
+                                  for m in test_mentors}
+            selected_test_mentor_name = st.selectbox(
+                "Select Mentor for Test",
+                options=list(test_mentor_options.keys()),
+                key="test_mentor_select"
+            )
+            test_mentor_id = test_mentor_options[selected_test_mentor_name]
+            test_mentor = mentor_service.get_mentor_by_id(test_mentor_id)
+    
+    # Generate test email button
+    if test_student and test_mentor:
+        col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 2])
+        
+        with col_btn1:
+            if st.button("🤖 Generate AI Email", type="primary", use_container_width=True):
+                with st.spinner("Generating refined email..."):
+                    try:
+                        # Create match reason
+                        student_interests = ', '.join(test_student.get('interests', [])[:2])
+                        mentor_expertise = ', '.join(test_mentor.get('expertise_areas', [])[:2])
+                        
+                        match_reason = f"{test_student.get('name')} is passionate about {student_interests}, which aligns well with your expertise in {mentor_expertise}. This mentorship could provide valuable guidance as they prepare for their career."
+                        
+                        # Generate email
+                        subject, body = generate_mentor_outreach_email(
+                            test_student, 
+                            test_mentor, 
+                            match_reason
+                        )
+                        
+                        # Store in session state
+                        st.session_state['generated_email_subject'] = subject
+                        st.session_state['generated_email_body'] = body
+                        st.session_state['email_generated'] = True
+                        
+                        st.success("✅ Email generated successfully!")
+                        st.rerun()
+                        
+                    except Exception as e:
+                        st.error(f"❌ Error generating email: {str(e)}")
+        
+        with col_btn2:
+            if st.session_state.get('email_generated', False):
+                if st.button("🗑️ Clear", use_container_width=True):
+                    st.session_state['email_generated'] = False
+                    st.session_state.pop('generated_email_subject', None)
+                    st.session_state.pop('generated_email_body', None)
+                    st.rerun()
+        
+        # Display generated email
+        if st.session_state.get('email_generated', False):
+            st.divider()
+            
+            st.markdown("### 📧 Generated Email Preview")
+            
+            # Subject
+            st.markdown("**Subject:**")
+            st.code(st.session_state.get('generated_email_subject', ''), language=None)
+            
+            # Body
+            st.markdown("**Body:**")
+            email_body = st.session_state.get('generated_email_body', '')
+            
+            # Display email content
+            st.text_area(
+                "Email Content",
+                value=email_body,
+                height=300,
+                disabled=True,
+                label_visibility="collapsed"
+            )
 
 
 def render_email_management_page():
-    """Render the email management page"""
+    """Render the email management page with history sections"""
     st.title("📧 Email Management")
     
-    tab1, tab2, tab3 = st.tabs(["Send Email", "Templates", "History"])
+    # Initialize email service
+    email_service = EmailService()
     
+    # Create tabs
+    tab1, tab2, tab3 = st.tabs(["📅 Scheduled Emails", "✅ Sent Emails", "❌ Failed Emails"])
+    
+    # TAB 1: Scheduled Emails (Future Queue)
     with tab1:
-        st.subheader("Send Email via N8N")
+        st.subheader("Scheduled Emails (Future Email Queue)")
+        st.caption("Emails waiting to be sent at their planned time")
         
-        recipients = st.multiselect("Recipients", ["Students", "Mentors", "All"])
-        subject = st.text_input("Subject")
-        message = st.text_area("Message", height=200)
+        scheduled_emails = email_service.list_scheduled_emails()
         
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("Generate with AI", type="secondary"):
-                st.info("AI email generation coming soon!")
-        with col2:
-            if st.button("Send Email", type="primary"):
-                st.info("Email sending functionality coming soon!")
+        if scheduled_emails:
+            st.info(f"📬 {len(scheduled_emails)} email(s) in queue")
+            
+            # Create table data
+            table_data = []
+            for email in scheduled_emails:
+                planned_time = email.get("planned_send_time")
+                if isinstance(planned_time, str):
+                    planned_time = datetime.fromisoformat(planned_time.replace('Z', '+00:00'))
+                
+                table_data.append({
+                    "Recipient": email.get("recipient_email", "N/A"),
+                    "Subject": email.get("subject", "N/A"),
+                    "Planned Send Time": planned_time.strftime("%b %d, %Y %I:%M %p") if planned_time else "N/A",
+                    "Status": "📅 Scheduled"
+                })
+            
+            st.dataframe(
+                table_data,
+                use_container_width=True,
+                hide_index=True
+            )
+        else:
+            st.info("✨ No emails scheduled. The queue is empty.")
     
+    # TAB 2: Sent Emails (History)
     with tab2:
-        st.subheader("Email Templates")
-        st.info("No templates created yet")
+        st.subheader("🟩 Sent Emails (History)")
+        st.caption("Successfully delivered emails")
+        
+        sent_emails = email_service.list_sent_emails(limit=50)
+        
+        if sent_emails:
+            st.success(f"✅ {len(sent_emails)} email(s) sent successfully")
+            
+            # Create table data
+            table_data = []
+            for email in sent_emails:
+                planned_time = email.get("planned_send_time")
+                actual_time = email.get("actual_send_time") or email.get("sent_at")
+                
+                if isinstance(planned_time, str):
+                    planned_time = datetime.fromisoformat(planned_time.replace('Z', '+00:00'))
+                if isinstance(actual_time, str):
+                    actual_time = datetime.fromisoformat(actual_time.replace('Z', '+00:00'))
+                
+                table_data.append({
+                    "Recipient": email.get("recipient_email", "N/A"),
+                    "Subject": email.get("subject", "N/A"),
+                    "Planned Send Time": planned_time.strftime("%b %d, %Y %I:%M %p") if planned_time else "N/A",
+                    "Actual Send Time": actual_time.strftime("%b %d, %Y %I:%M %p") if actual_time else "Legacy (pre-tracking)",
+                    "Status": "✅ Sent"
+                })
+            
+            st.dataframe(
+                table_data,
+                use_container_width=True,
+                hide_index=True
+            )
+        else:
+            st.info("📭 No emails sent yet.")
     
+    # TAB 3: Failed Emails (Error Log)
     with tab3:
-        st.subheader("Email History")
-        st.info("No emails sent yet")
+        st.subheader("🟥 Failed Emails (Error Log)")
+        st.caption("Emails that encountered delivery errors")
+        
+        failed_emails = email_service.list_failed_emails(limit=50)
+        
+        if failed_emails:
+            st.error(f"⚠️ {len(failed_emails)} email(s) failed to send")
+            
+            # Create table data with color coding
+            for i, email in enumerate(failed_emails):
+                with st.expander(f"❌ {email.get('recipient_email', 'N/A')} - {email.get('subject', 'N/A')}", expanded=(i < 3)):
+                    planned_time = email.get("planned_send_time")
+                    failure_time = email.get("actual_send_time")
+                    
+                    if isinstance(planned_time, str):
+                        planned_time = datetime.fromisoformat(planned_time.replace('Z', '+00:00'))
+                    if isinstance(failure_time, str):
+                        failure_time = datetime.fromisoformat(failure_time.replace('Z', '+00:00'))
+                    
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.write("**Recipient:**", email.get("recipient_email", "N/A"))
+                        st.write("**Subject:**", email.get("subject", "N/A"))
+                        st.write("**Planned Send Time:**", planned_time.strftime("%b %d, %Y %I:%M %p") if planned_time else "N/A")
+                    with col2:
+                        st.write("**Failure Time:**", failure_time.strftime("%b %d, %Y %I:%M %p") if failure_time else "Legacy (pre-tracking)")
+                        st.write("**Error Message:**")
+                        st.code(email.get("error_message", "Unknown error"), language=None)
+        else:
+            st.success("✅ No failed emails. All deliveries successful!")
 
 
 def main():
@@ -1309,23 +1866,28 @@ def main():
     # Initialize the app
     init_app()
     
+    # Check authentication
+    if not st.session_state.get("authenticated", False):
+        render_login_page()
+        return
+    
     # Render sidebar and get selected page
     page = render_sidebar()
     
     # Render the selected page
-    if page == "Dashboard":
+    if page == "🗂️ Dashboard":
         render_dashboard()
-    elif page == "Students":
+    elif page == "🎓 Students":
         render_students_page()
-    elif page == "Mentors":
+    elif page == "🧑‍🏫 Mentors":
         render_mentors_page()
-    elif page == "Events":
+    elif page == "📅 Events":
         render_events_page()
-    elif page == "Case Competitions":
+    elif page == "🏆 Case Competitions":
         render_case_competitions_page()
-    elif page == "Matching":
+    elif page == "🤖 Matching":
         render_matching_page()
-    elif page == "Email Management":
+    elif page == "📨 Email Management":
         render_email_management_page()
 
 

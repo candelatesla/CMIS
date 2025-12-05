@@ -325,7 +325,7 @@ def generate_mentor_outreach_email(
     Args:
         student: Student dictionary with name, major, interests, skills
         mentor: Mentor dictionary with name, job_title, company, expertise_areas
-        match_reason: AI-generated reason for the match
+        match_reason: AI-generated reason for the match (should NOT contain scores)
         
     Returns:
         tuple: (subject, body) - email subject and body text
@@ -335,62 +335,72 @@ def generate_mentor_outreach_email(
     student_name = student.get('name', 'Student')
     student_major = student.get('major', 'N/A')
     student_grad_year = student.get('grad_year', 'N/A')
-    student_interests = ', '.join(student.get('interests', [])[:4])
-    student_skills = ', '.join(student.get('skills', [])[:6])
+    student_interests = ', '.join(student.get('interests', [])[:3])
+    student_skills = ', '.join(student.get('skills', [])[:4])
     
     # Extract mentor information
     mentor_name = mentor.get('name', 'Mentor')
     mentor_title = mentor.get('job_title', 'N/A')
     mentor_company = mentor.get('company', 'N/A')
-    mentor_expertise = ', '.join(mentor.get('expertise_areas', [])[:5])
+    mentor_expertise = ', '.join(mentor.get('expertise_areas', [])[:3])
     
-    # Create the prompt
-    prompt = f"""Write a warm, personalized outreach email from a CMIS coordinator to a mentor about mentoring a specific student.
+    # Create the prompt for a natural, human-sounding email
+    prompt = f"""Write a warm, genuine mentor outreach email from the CMIS program coordinator.
 
-STUDENT DETAILS:
+STUDENT:
 - Name: {student_name}
 - Major: {student_major}
-- Graduation Year: {student_grad_year}
+- Graduating: {student_grad_year}
 - Interests: {student_interests}
 - Skills: {student_skills}
 
-MENTOR DETAILS:
+MENTOR:
 - Name: {mentor_name}
-- Title: {mentor_title} at {mentor_company}
+- Role: {mentor_title} at {mentor_company}
 - Expertise: {mentor_expertise}
 
-MATCH REASON:
+WHY THEY'RE A GOOD MATCH:
 {match_reason}
 
-REQUIREMENTS:
-1. Write in a warm, human, conversational tone (as if from a real CMIS coordinator)
-2. Be highly specific - mention actual skills, interests, and expertise areas
-3. Explain why this particular student would benefit from this particular mentor
-4. Make it personal, not generic or templated
-5. Keep it concise (3-4 short paragraphs)
-6. End with: "Would you be open to mentoring this student?"
-7. Sign off as "The CMIS Team"
+Write a brief, natural email (2-3 short paragraphs) that:
+1. Introduces the student warmly
+2. Explains why they would benefit from this mentor's guidance (use the match reason naturally)
+3. Mentions specific overlapping interests/expertise
+4. Asks if the mentor is open to connecting
 
-Provide the email in this format:
-SUBJECT: [compelling subject line]
+DO NOT mention: match scores, algorithms, similarity percentages, AI, or technical processes.
+
+Use this structure:
+
+Hi [mentor name],
+
+I hope you're doing well. I'm reaching out from the CMIS Engagement Platform to introduce you to [student], a [major] major graduating in [year].
+
+[Blend the match reason here naturally - explain why this connection makes sense based on their interests and your expertise]
+
+Based on your background in [expertise], and the student's interests in [interests], we feel you would be an excellent fit for mentorship.
+
+If you're open to it, we'd love for you to consider connecting with [student]. Please let us know if you'd like an introduction.
+
+Warm regards,
+The CMIS Team
+
+Format as:
+SUBJECT: [subject line]
 
 BODY:
 [email body]"""
-    
-    # Create Groq client inside the try block to handle initialization gracefully
-    subject_part = None
-    body = None
     
     try:
         from groq import Groq as GroqClient
         client = GroqClient(api_key=GROQ_API_KEY)
         
-        # Call Groq API with Mixtral
+        # Call Groq API
         response = client.chat.completions.create(
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a CMIS coordinator writing highly personalized outreach emails to mentors. Avoid generic phrasing. Be warm, human, and specific to the individuals involved."
+                    "content": "You are a CMIS program coordinator. Write warm, natural, genuine outreach emails. Do NOT mention match scores, algorithms, AI models, or technical processes. Focus on the student, the mentor, and why the connection makes sense. Keep it brief, human, and encouraging."
                 },
                 {
                     "role": "user",
@@ -398,8 +408,8 @@ BODY:
                 }
             ],
             model="mixtral-8x7b-32768",
-            temperature=0.7,
-            max_tokens=500,
+            temperature=0.6,
+            max_tokens=600,
             top_p=0.9
         )
         
@@ -416,26 +426,33 @@ BODY:
             subject_part = lines[0].replace("SUBJECT:", "").strip()
             body = lines[1].strip() if len(lines) > 1 else content
         
-        # Clean up any markdown or extra formatting
-        subject_part = subject_part.replace('**', '').replace('*', '')
-        body = body.replace('**', '').replace('*', '')
+        # Clean up markdown formatting and extra asterisks
+        subject_part = subject_part.replace('**', '').replace('*', '').strip()
+        body = body.replace('**', '').replace('*', '').strip()
+        
+        # Remove any markdown headers or code blocks
+        if subject_part.startswith('#'):
+            subject_part = subject_part.lstrip('#').strip()
+        if body.startswith('```'):
+            body = '\n'.join([line for line in body.split('\n') if not line.startswith('```')])
         
         return (subject_part, body)
         
     except Exception as e:
-        # Fallback email in case of API error (works with Groq v0.4.1 compatibility issues)
-        subject = f"Mentorship Opportunity: {student_name}"
+        # Fallback email with proper formatting
+        subject = f"Introduction to a Potential Mentee"
+        
         body = f"""Hi {mentor_name},
 
-I hope this email finds you well. I'm reaching out from the CMIS Engagement Platform to introduce you to {student_name}, a {student_major} major graduating in {student_grad_year}.
+I hope you're doing well. I'm reaching out from the CMIS Engagement Platform to introduce you to {student_name}, a {student_major} major graduating in {student_grad_year}.
 
-{match_reason}
+{match_reason.strip()}
 
-Given your expertise in {mentor_expertise} and {student_name}'s interests in {student_interests}, I believe this could be a valuable mentorship connection for both of you.
+Based on your background in {mentor_expertise}, and the student's interests in {student_interests}, we feel you would be an excellent fit for mentorship.
 
-Would you be open to mentoring this student?
+If you're open to it, we'd love for you to consider connecting with {student_name}. Please let us know if you'd like an introduction.
 
-Best regards,
+Warm regards,
 The CMIS Team"""
         
         return (subject, body)

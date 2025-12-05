@@ -92,6 +92,27 @@ class MentorService:
             print(f"Error getting mentor: {str(e)}")
             return None
     
+    def get_mentor_by_email(self, email: str) -> Optional[Dict[str, Any]]:
+        """
+        Get a mentor by email
+        
+        Args:
+            email: Mentor email address
+            
+        Returns:
+            Mentor dictionary or None
+        """
+        try:
+            mentor_data = self.collection.find_one({"email": email})
+            
+            if mentor_data:
+                return self._serialize_document(mentor_data)
+            return None
+            
+        except Exception as e:
+            print(f"Error getting mentor by email: {str(e)}")
+            return None
+    
     def update_mentor(self, mentor_id: str, updates: Dict[str, Any]) -> Dict[str, Any]:
         """
         Update a mentor

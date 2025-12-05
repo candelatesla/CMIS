@@ -8,7 +8,8 @@ import requests
 import random
 from db import get_collection
 from models.emails import EmailLog
-from config import N8N_WEBHOOK_URL
+from config import N8N_WEBHOOK_URL, get_safe_test_mode, get_safe_test_emails
+from utils.time_utils import get_human_like_schedule_time
 
 
 class EmailService:
@@ -313,6 +314,11 @@ class EmailService:
         """
         Schedule an email for future delivery with human-like timing.
         
+        Uses refined scheduling logic:
+        - Before 8 AM: Schedule between 8-10 AM today
+        - 8 AM - 5 PM: Schedule after 10-25 minutes
+        - After 5 PM: Schedule next day between 8-10 AM
+        
         Args:
             recipient_email: Email address of recipient
             recipient_role: Role of recipient (e.g., "mentor", "student")
@@ -323,20 +329,11 @@ class EmailService:
         Returns:
             dict: Created email log with scheduled time
         """
-        # Compute human-like send time (between 15 minutes and 24 hours)
-        min_delay_minutes = 15
-        max_delay_minutes = 24 * 60  # 24 hours
+        # Get human-like scheduled time using refined logic
+        scheduled_time = get_human_like_schedule_time()
         
-        # Random delay in minutes
-        delay_minutes = random.randint(min_delay_minutes, max_delay_minutes)
-        
-        # Calculate scheduled time
+        # Get current time for created_at
         now = datetime.now(timezone.utc)
-        scheduled_time = now + timedelta(minutes=delay_minutes)
-        
-        # Add random seconds to avoid exact times (e.g., 9:17:23 instead of 9:00:00)
-        random_seconds = random.randint(0, 59)
-        scheduled_time = scheduled_time.replace(second=random_seconds, microsecond=0)
         
         # Create email log entry
         email_data = {
@@ -357,10 +354,18 @@ class EmailService:
         """
         Query all scheduled emails that are due for sending and send them via N8N webhook.
         
+        In Safe Test Mode (SAFE_TEST_MODE=true), emails are redirected to test addresses
+        instead of real recipients to avoid polluting production inboxes.
+        
         Returns:
             dict: Summary of sending results
         """
         now = datetime.now(timezone.utc)
+        
+        # Check Safe Test Mode
+        safe_mode = get_safe_test_mode()
+        test_emails = get_safe_test_emails() if safe_mode else []
+        test_email_index = 0  # Rotating index for test emails
         
         # Find all emails that are scheduled and due to be sent
         due_emails = self.collection.find({
@@ -372,17 +377,27 @@ class EmailService:
             "total_processed": 0,
             "sent": 0,
             "failed": 0,
+            "safe_test_mode": safe_mode,
             "details": []
         }
         
         for email_doc in due_emails:
             results["total_processed"] += 1
             email_id = str(email_doc["_id"])
+            original_recipient = email_doc["recipient_email"]
             
             try:
+                # Determine actual recipient email
+                if safe_mode and test_emails:
+                    # Rotate through test emails
+                    actual_recipient = test_emails[test_email_index % len(test_emails)]
+                    test_email_index += 1
+                else:
+                    actual_recipient = original_recipient
+                
                 # Prepare payload for N8N webhook
                 payload = {
-                    "email": email_doc["recipient_email"],
+                    "email": actual_recipient,
                     "subject": email_doc["subject"],
                     "body": email_doc["body"]
                 }
@@ -396,27 +411,38 @@ class EmailService:
                 
                 if response.status_code == 200:
                     # Mark as sent
-                    self.update_email_log(email_id, {
+                    update_data = {
                         "status": "sent",
+                        "actual_send_time": now,
                         "sent_at": now
-                    })
+                    }
+                    # Store actual sent email if redirected in safe mode
+                    if safe_mode and actual_recipient != original_recipient:
+                        update_data["actual_recipient"] = actual_recipient
+                    
+                    self.update_email_log(email_id, update_data)
                     results["sent"] += 1
-                    results["details"].append({
+                    
+                    detail = {
                         "email_id": email_id,
-                        "recipient": email_doc["recipient_email"],
+                        "original_recipient": original_recipient,
                         "status": "sent"
-                    })
+                    }
+                    if safe_mode and actual_recipient != original_recipient:
+                        detail["redirected_to"] = actual_recipient
+                    results["details"].append(detail)
                 else:
                     # Mark as failed
                     error_msg = f"HTTP {response.status_code}: {response.text[:200]}"
                     self.update_email_log(email_id, {
                         "status": "failed",
+                        "actual_send_time": now,
                         "error_message": error_msg
                     })
                     results["failed"] += 1
                     results["details"].append({
                         "email_id": email_id,
-                        "recipient": email_doc["recipient_email"],
+                        "original_recipient": original_recipient,
                         "status": "failed",
                         "error": error_msg
                     })
@@ -426,14 +452,88 @@ class EmailService:
                 error_msg = str(e)
                 self.update_email_log(email_id, {
                     "status": "failed",
+                    "actual_send_time": now,
                     "error_message": error_msg
                 })
                 results["failed"] += 1
                 results["details"].append({
                     "email_id": email_id,
-                    "recipient": email_doc.get("recipient_email", "unknown"),
+                    "original_recipient": email_doc.get("recipient_email", "unknown"),
                     "status": "failed",
                     "error": error_msg
                 })
         
         return results
+    
+    def list_scheduled_emails(self) -> List[Dict[str, Any]]:
+        """
+        Get all scheduled emails (future emails in queue)
+        
+        Returns:
+            List of scheduled email dictionaries sorted by planned_send_time (ascending)
+        """
+        try:
+            now = datetime.now(timezone.utc)
+            emails_data = self.collection.find({
+                "status": "scheduled",
+                "planned_send_time": {"$gt": now}
+            }).sort("planned_send_time", 1)  # 1 = ascending
+            
+            return [self._serialize_document(data) for data in emails_data]
+        except Exception as e:
+            print(f"Error listing scheduled emails: {str(e)}")
+            return []
+    
+    def list_sent_emails(self, limit: int = 100) -> List[Dict[str, Any]]:
+        """
+        Get all sent emails
+        
+        Args:
+            limit: Maximum number of emails to return (default 100)
+            
+        Returns:
+            List of sent email dictionaries sorted by actual_send_time (descending)
+        """
+        try:
+            # Sort by actual_send_time if available, otherwise sent_at, otherwise planned_send_time
+            emails_data = list(self.collection.find({
+                "status": "sent"
+            }).limit(limit))
+            
+            # Sort in Python to handle missing fields
+            emails_data.sort(
+                key=lambda x: x.get("actual_send_time") or x.get("sent_at") or x.get("planned_send_time") or datetime.min.replace(tzinfo=timezone.utc),
+                reverse=True
+            )
+            
+            return [self._serialize_document(data) for data in emails_data]
+        except Exception as e:
+            print(f"Error listing sent emails: {str(e)}")
+            return []
+    
+    def list_failed_emails(self, limit: int = 100) -> List[Dict[str, Any]]:
+        """
+        Get all failed emails
+        
+        Args:
+            limit: Maximum number of emails to return (default 100)
+            
+        Returns:
+            List of failed email dictionaries sorted by actual_send_time (descending)
+        """
+        try:
+            # Sort by actual_send_time if available, otherwise planned_send_time
+            emails_data = list(self.collection.find({
+                "status": "failed"
+            }).limit(limit))
+            
+            # Sort in Python to handle missing fields
+            emails_data.sort(
+                key=lambda x: x.get("actual_send_time") or x.get("planned_send_time") or datetime.min.replace(tzinfo=timezone.utc),
+                reverse=True
+            )
+            
+            return [self._serialize_document(data) for data in emails_data]
+        except Exception as e:
+            print(f"Error listing failed emails: {str(e)}")
+            return []

@@ -22,6 +22,26 @@ N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "")
 APP_TITLE = "CMIS Engagement Platform Admin Dashboard"
 APP_VERSION = "1.0.0"
 
+# Safe Test Mode Configuration
+def get_safe_test_mode() -> bool:
+    """Check if Safe Test Mode is enabled
+    
+    Returns:
+        bool: True if SAFE_TEST_MODE=true in .env, False otherwise
+    """
+    return os.getenv("SAFE_TEST_MODE", "false").lower() == "true"
+
+def get_safe_test_emails() -> list:
+    """Get list of safe test email addresses for email redirection
+    
+    Returns:
+        list: List of test email addresses from SAFE_TEST_EMAILS
+    """
+    emails_str = os.getenv("SAFE_TEST_EMAILS", "")
+    if not emails_str:
+        return []
+    return [email.strip() for email in emails_str.split(",") if email.strip()]
+
 # Validate required environment variables
 def validate_config():
     """Validate that all required environment variables are set"""
