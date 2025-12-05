@@ -1,7 +1,7 @@
 """
 Email service for sending emails via N8N webhook
 """
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Tuple
 from datetime import datetime, timezone, timedelta
 from bson import ObjectId
 import requests
@@ -281,6 +281,65 @@ class EmailService:
             })
             return False, email_id
     
+    def send_team_registration_email(self, member_email: str, member_name: str, 
+                                     event_name: str, event_date: str, team_name: str, 
+                                     all_members: List[str]) -> bool:
+        """
+        Send team registration confirmation email
+        
+        Args:
+            member_email: Email address of team member
+            member_name: Name of team member
+            event_name: Name of the event
+            event_date: Date of the event
+            team_name: Name of the team
+            all_members: List of all team member names
+            
+        Returns:
+            bool: True if email sent successfully, False otherwise
+        """
+        # Import formatting utilities
+        from utils.email_formatting import build_team_registration_email_html
+        
+        # Use HTML formatter
+        subject, body = build_team_registration_email_html(
+            member_name=member_name,
+            event_name=event_name,
+            event_date=event_date,
+            team_name=team_name,
+            all_members=all_members
+        )
+        
+        try:
+            if not self.webhook_url:
+                print(f"N8N webhook URL not configured - email not sent to {member_email}")
+                return False
+            
+            # n8n webhook expects "email" not "recipient"
+            payload = {
+                "email": member_email,
+                "subject": subject,
+                "body": body
+            }
+            
+            response = requests.post(
+                self.webhook_url,
+                json=payload,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                print(f"✅ Team registration email sent to {member_email}")
+                return True
+            else:
+                print(f"❌ Failed to send email to {member_email}: HTTP {response.status_code}")
+                print(f"   Response: {response.text}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Error sending email to {member_email}: {str(e)}")
+            return False
+    
     def get_sent_emails(self, limit: int = 50) -> List[EmailLog]:
         """
         Get recently sent emails
@@ -537,3 +596,580 @@ class EmailService:
         except Exception as e:
             print(f"Error listing failed emails: {str(e)}")
             return []
+    
+    def send_mentor_match_email(self, mentor_email: str, mentor_name: str, subject: str, body: str, match_id: str = None) -> Tuple[bool, str]:
+        """
+        Send a mentor match email immediately (wrapper around send_email)
+        
+        Args:
+            mentor_email: Mentor's email address
+            mentor_name: Mentor's name
+            subject: Email subject line
+            body: Email body (HTML)
+            match_id: Optional match ID to associate with email
+            
+        Returns:
+            Tuple of (success: bool, email_id: str)
+        """
+        return self.send_email(
+            recipient_email=mentor_email,
+            recipient_role="mentor",
+            subject=subject,
+            body=body,
+            related_match_id=match_id
+        )
+    
+    def mark_email_sent(self, email_id: str) -> bool:
+        """
+        Mark a scheduled email as sent immediately
+        
+        Args:
+            email_id: ID of the email to mark as sent
+            
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            result = self.update_email_log(email_id, {
+                "status": "sent",
+                "actual_send_time": datetime.now(timezone.utc)
+            })
+            return result is not None
+        except Exception as e:
+            print(f"Error marking email as sent: {str(e)}")
+            return False
+    
+    def build_team_score_email_plain(self, student_name: str, event_name: str, team_name: str, 
+                                     mentor_name: str, score: float, comments: str) -> str:
+        """
+        Build plain text score notification email
+        
+        Args:
+            student_name: Name of the student
+            event_name: Name of the event
+            team_name: Name of the team
+            mentor_name: Name of the judge/mentor
+            score: Score given by judge
+            comments: Comments from judge
+            
+        Returns:
+            Plain text email body
+        """
+        return f"""Dear {student_name},
+
+Your team has been scored for the {event_name}.
+
+Team: {team_name}
+Judge: {mentor_name}
+Score: {score}
+
+Comments:
+{comments or "No comments provided."}
+
+You can now view your score in your Student Dashboard under 'My Scores'.
+
+Best regards,
+CMIS Engagement Platform
+Texas A&M University""".strip()
+    
+    def build_team_score_email_html(self, student_name: str, event_name: str, team_name: str,
+                                    mentor_name: str, score: float, comments: str) -> str:
+        """
+        Build HTML score notification email
+        
+        Args:
+            student_name: Name of the student
+            event_name: Name of the event
+            team_name: Name of the team
+            mentor_name: Name of the judge/mentor
+            score: Score given by judge
+            comments: Comments from judge
+            
+        Returns:
+            HTML formatted email body
+        """
+        return f"""<p>Dear {student_name},</p>
+
+<p>Your team has been scored for the <strong>{event_name}</strong>.</p>
+
+<h3>Score Details</h3>
+<ul>
+  <li><strong>Team:</strong> {team_name}</li>
+  <li><strong>Judge:</strong> {mentor_name}</li>
+  <li><strong>Score:</strong> {score}</li>
+</ul>
+
+<h3>Judge Comments</h3>
+<p>{comments or "No comments were provided."}</p>
+
+<p>You can now view your score anytime in your Student Dashboard under <strong>My Scores</strong>.</p>
+
+<p>Best regards,<br>
+<strong>CMIS Engagement Platform</strong><br>
+Texas A&amp;M University</p>"""
+    
+    def send_team_score_notification(self, team: Dict[str, Any], mentor: Dict[str, Any], 
+                                     score: float, comments: str) -> int:
+        """
+        Send score notification emails to all team members
+        
+        Args:
+            team: Team document with event_id, team_name, members[]
+            mentor: Mentor/judge document with name
+            score: Score given
+            comments: Comments from judge
+            
+        Returns:
+            Number of emails successfully sent
+        """
+        try:
+            # Import EventService here to avoid circular import
+            from services.event_service import EventService
+            event_service = EventService()
+            
+            # Get event details
+            event = event_service.get_event_by_id(team.get("event_id"))
+            if not event:
+                print(f"Error: Event not found for team {team.get('team_name')}")
+                return 0
+            
+            event_name = event.get("name", "Unknown Event")
+            team_name = team.get("team_name", "Unknown Team")
+            mentor_name = mentor.get("name", "Unknown Judge")
+            
+            sent_count = 0
+            members = team.get("members", [])
+            
+            for member in members:
+                name = member.get("name", "Student")
+                email = member.get("email")
+                
+                if not email:
+                    continue
+                
+                try:
+                    # Try HTML format first
+                    body = self.build_team_score_email_html(
+                        student_name=name,
+                        event_name=event_name,
+                        team_name=team_name,
+                        mentor_name=mentor_name,
+                        score=score,
+                        comments=comments
+                    )
+                except Exception as e:
+                    print(f"Error building HTML email, using plain text: {str(e)}")
+                    # Fallback to plain text
+                    body = self.build_team_score_email_plain(
+                        student_name=name,
+                        event_name=event_name,
+                        team_name=team_name,
+                        mentor_name=mentor_name,
+                        score=score,
+                        comments=comments
+                    )
+                
+                # Send via N8N webhook
+                try:
+                    payload = {
+                        "email": email,
+                        "subject": f"Your Team Score – {event_name}",
+                        "body": body
+                    }
+                    
+                    response = requests.post(N8N_WEBHOOK_URL, json=payload, timeout=10)
+                    
+                    if response.status_code == 200:
+                        sent_count += 1
+                        print(f"Score notification sent to {email}")
+                    else:
+                        print(f"Failed to send score notification to {email}: {response.status_code}")
+                        
+                except Exception as e:
+                    print(f"Error sending score notification to {email}: {str(e)}")
+            
+            return sent_count
+            
+        except Exception as e:
+            print(f"Error in send_team_score_notification: {str(e)}")
+            return 0
+    
+    # ========================================================================
+    # MENTORSHIP ACCEPTANCE EMAILS
+    # ========================================================================
+    
+    def build_mentor_accept_email_html(
+        self,
+        student: Dict[str, Any],
+        mentor: Dict[str, Any],
+        match_reason: str
+    ) -> str:
+        """
+        Build HTML email for student when mentor accepts mentorship
+        
+        Args:
+            student: Student dictionary
+            mentor: Mentor dictionary
+            match_reason: Why they were matched
+            
+        Returns:
+            HTML email body
+        """
+        return f"""
+<p>Dear {student.get('name', 'Student')},</p>
+
+<p>Great news! Your assigned mentor, <strong>{mentor.get('name', 'N/A')}</strong>, has accepted your mentorship request through the CMIS Engagement Platform.</p>
+
+<h3>Mentor Information</h3>
+<ul>
+  <li><strong>Name:</strong> {mentor.get('name', 'N/A')}</li>
+  <li><strong>Email:</strong> {mentor.get('email', 'N/A')}</li>
+  <li><strong>Company:</strong> {mentor.get('company', 'N/A')}</li>
+  <li><strong>Role:</strong> {mentor.get('job_title', 'N/A')}</li>
+</ul>
+
+<h3>Why You Were Matched</h3>
+<p>{match_reason}</p>
+
+<p>You can now view your mentor's full profile under <strong>My Assigned Mentor</strong> in your Student Dashboard.</p>
+
+<p>Please reach out to your mentor to schedule your first meeting.</p>
+
+<p>Best regards,<br>
+<strong>CMIS Engagement Platform</strong><br>
+Texas A&M University</p>
+"""
+    
+    def build_mentor_accept_email_plain(
+        self,
+        student: Dict[str, Any],
+        mentor: Dict[str, Any],
+        match_reason: str
+    ) -> str:
+        """
+        Build plain text email for student when mentor accepts mentorship
+        
+        Args:
+            student: Student dictionary
+            mentor: Mentor dictionary
+            match_reason: Why they were matched
+            
+        Returns:
+            Plain text email body
+        """
+        return f"""
+Dear {student.get('name', 'Student')},
+
+Great news! Your assigned mentor, {mentor.get('name', 'N/A')}, has accepted your mentorship request.
+
+Mentor Details:
+- Name: {mentor.get('name', 'N/A')}
+- Email: {mentor.get('email', 'N/A')}
+- Company: {mentor.get('company', 'N/A')}
+- Role: {mentor.get('job_title', 'N/A')}
+
+Why you were matched:
+{match_reason}
+
+You can now see your assigned mentor inside your Student Dashboard.
+
+Please reach out to schedule your first meeting.
+
+Best regards,
+CMIS Engagement Platform
+Texas A&M University
+""".strip()
+    
+    def build_mentor_accept_confirmation_email_html(
+        self,
+        student: Dict[str, Any],
+        mentor: Dict[str, Any],
+        match_reason: str
+    ) -> str:
+        """
+        Build HTML confirmation email for mentor after accepting student
+        
+        Args:
+            student: Student dictionary
+            mentor: Mentor dictionary
+            match_reason: Why they were matched
+            
+        Returns:
+            HTML email body
+        """
+        return f"""
+<p>Dear {mentor.get('name', 'Mentor')},</p>
+
+<p>Thank you for confirming your mentorship assignment in the CMIS Engagement Platform.</p>
+
+<p>You have now been officially assigned as a mentor to the following student:</p>
+
+<h3>Student Information</h3>
+<ul>
+  <li><strong>Name:</strong> {student.get('name', 'N/A')}</li>
+  <li><strong>Email:</strong> {student.get('email', 'N/A')}</li>
+  <li><strong>Major:</strong> {student.get('major', 'N/A')}</li>
+  <li><strong>Graduation Year:</strong> {student.get('graduation_year', student.get('year', 'N/A'))}</li>
+</ul>
+
+<h3>Why You Were Matched</h3>
+<p>{match_reason}</p>
+
+<p>Please reach out to the student to schedule your first meeting.</p>
+
+<p>Thank you for supporting students at Texas A&M University.</p>
+
+<p>Best regards,<br>
+<strong>CMIS Engagement Platform</strong><br>
+Texas A&M University</p>
+"""
+    
+    def build_mentor_accept_confirmation_email_plain(
+        self,
+        student: Dict[str, Any],
+        mentor: Dict[str, Any],
+        match_reason: str
+    ) -> str:
+        """
+        Build plain text confirmation email for mentor after accepting student
+        
+        Args:
+            student: Student dictionary
+            mentor: Mentor dictionary
+            match_reason: Why they were matched
+            
+        Returns:
+            Plain text email body
+        """
+        return f"""
+Dear {mentor.get('name', 'Mentor')},
+
+Thank you for accepting your mentorship assignment.
+
+Student Details:
+- Name: {student.get('name', 'N/A')}
+- Email: {student.get('email', 'N/A')}
+- Major: {student.get('major', 'N/A')}
+- Graduation Year: {student.get('graduation_year', student.get('year', 'N/A'))}
+
+Why you were matched:
+{match_reason}
+
+Please reach out to the student to schedule your first meeting.
+
+Best regards,
+CMIS Engagement Platform
+Texas A&M University
+""".strip()
+    
+    def send_mentor_acceptance_email(
+        self,
+        student: Dict[str, Any],
+        mentor: Dict[str, Any],
+        match_reason: str
+    ) -> bool:
+        """
+        Send acceptance email to student when mentor accepts mentorship
+        
+        Args:
+            student: Student dictionary
+            mentor: Mentor dictionary
+            match_reason: Why they were matched
+            
+        Returns:
+            bool: True if sent successfully
+        """
+        try:
+            # Try HTML format first
+            try:
+                body = self.build_mentor_accept_email_html(student, mentor, match_reason)
+            except Exception as e:
+                print(f"Error building HTML email, using plain text: {str(e)}")
+                body = self.build_mentor_accept_email_plain(student, mentor, match_reason)
+            
+            payload = {
+                "email": student.get("email"),
+                "subject": f"Your Mentor Has Accepted – {mentor.get('name', 'Your Mentor')}",
+                "body": body
+            }
+            
+            response = requests.post(self.webhook_url, json=payload, timeout=10)
+            
+            if response.status_code == 200:
+                print(f"Mentor acceptance email sent to student: {student.get('email')}")
+                return True
+            else:
+                print(f"Failed to send mentor acceptance email: {response.status_code}")
+                return False
+                
+        except Exception as e:
+            print(f"Error sending mentor acceptance email: {str(e)}")
+            return False
+    
+    def send_mentor_accept_confirmation_email(
+        self,
+        student: Dict[str, Any],
+        mentor: Dict[str, Any],
+        match_reason: str
+    ) -> bool:
+        """
+        Send confirmation email to mentor after accepting student
+        
+        Args:
+            student: Student dictionary
+            mentor: Mentor dictionary
+            match_reason: Why they were matched
+            
+        Returns:
+            bool: True if sent successfully
+        """
+        try:
+            # Try HTML format first
+            try:
+                body = self.build_mentor_accept_confirmation_email_html(student, mentor, match_reason)
+            except Exception as e:
+                print(f"Error building HTML email, using plain text: {str(e)}")
+                body = self.build_mentor_accept_confirmation_email_plain(student, mentor, match_reason)
+            
+            payload = {
+                "email": mentor.get("email"),
+                "subject": f"You've Been Assigned a Student – {student.get('name', 'Student')}",
+                "body": body
+            }
+            
+            response = requests.post(self.webhook_url, json=payload, timeout=10)
+            
+            if response.status_code == 200:
+                print(f"Mentor confirmation email sent to mentor: {mentor.get('email')}")
+                return True
+            else:
+                print(f"Failed to send mentor confirmation email: {response.status_code}")
+                return False
+                
+        except Exception as e:
+            print(f"Error sending mentor confirmation email: {str(e)}")
+            return False
+    
+    def build_judge_assignment_email_html(
+        self,
+        judge: Dict[str, Any],
+        event: Dict[str, Any]
+    ) -> str:
+        """
+        Build HTML email for judge assignment notification
+        
+        Args:
+            judge: Judge dictionary
+            event: Event dictionary
+            
+        Returns:
+            str: HTML email body
+        """
+        from datetime import date
+        
+        judge_name = judge.get('name', 'Judge')
+        event_name = event.get('name', 'Event')
+        today = date.today().strftime("%B %d, %Y")
+        
+        return f"""
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <p>Howdy {judge_name},</p>
+    
+    <p>You have been added as a judge for the <strong>{event_name}</strong> through the CMIS Engagement Platform.</p>
+    
+    <h3 style="color: #500000;">Event Details</h3>
+    <ul style="line-height: 1.8;">
+        <li><strong>Event:</strong> {event_name}</li>
+        <li><strong>Date:</strong> Today, {today}</li>
+        <li><strong>Judging Window:</strong> 9:00 AM – 5:00 PM</li>
+    </ul>
+    
+    <p>You can now log into your Judge Dashboard to view the teams registered for this event and begin scoring once submissions are available.</p>
+    
+    <p>Thank you for supporting CMIS and mentoring students at Texas A&M University.</p>
+    
+    <p>Gig 'em,<br>
+    <strong>CMIS Engagement Platform</strong></p>
+</div>
+"""
+    
+    def build_judge_assignment_email_plain(
+        self,
+        judge: Dict[str, Any],
+        event: Dict[str, Any]
+    ) -> str:
+        """
+        Build plain text email for judge assignment notification
+        
+        Args:
+            judge: Judge dictionary
+            event: Event dictionary
+            
+        Returns:
+            str: Plain text email body
+        """
+        from datetime import date
+        
+        judge_name = judge.get('name', 'Judge')
+        event_name = event.get('name', 'Event')
+        today = date.today().strftime("%B %d, %Y")
+        
+        return f"""
+Howdy {judge_name},
+
+You have been added as a judge for the {event_name}.
+
+Event Details:
+- Event: {event_name}
+- Date: Today, {today}
+- Judging Window: 9:00 AM – 5:00 PM
+
+You can now log into your Judge Dashboard to view registered teams and begin scoring.
+
+Gig 'em,
+CMIS Engagement Platform
+"""
+    
+    def send_judge_assignment_email(
+        self,
+        judge: Dict[str, Any],
+        event: Dict[str, Any]
+    ) -> bool:
+        """
+        Send judge assignment notification email
+        
+        Args:
+            judge: Judge dictionary
+            event: Event dictionary
+            
+        Returns:
+            bool: True if sent successfully
+        """
+        try:
+            # Try HTML format first
+            try:
+                body = self.build_judge_assignment_email_html(judge, event)
+            except Exception as e:
+                print(f"Error building HTML email, using plain text: {str(e)}")
+                body = self.build_judge_assignment_email_plain(judge, event)
+            
+            event_name = event.get('name', 'Event')
+            
+            payload = {
+                "email": judge.get("email"),
+                "subject": f"You've Been Added as a Judge – {event_name}",
+                "body": body
+            }
+            
+            response = requests.post(self.webhook_url, json=payload, timeout=10)
+            
+            if response.status_code == 200:
+                print(f"Judge assignment email sent to: {judge.get('email')}")
+                return True
+            else:
+                print(f"Failed to send judge assignment email: {response.status_code}")
+                return False
+                
+        except Exception as e:
+            print(f"Error sending judge assignment email: {str(e)}")
+            return False

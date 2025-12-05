@@ -113,7 +113,7 @@ def rank_mentors_for_student(
             'mentor': mentor,
             'score': score,
             'mentor_name': mentor.get('name', 'Unknown'),
-            'mentor_id': mentor.get('mentor_id', 'N/A')
+            'mentor_id': str(mentor.get('_id', 'N/A'))
         })
     
     # Sort by score descending

@@ -159,6 +159,33 @@ class EventService:
             print(f"Error deleting event: {str(e)}")
             return {"error": str(e)}
     
+    def get_active_events(self) -> List[Dict[str, Any]]:
+        """
+        Get active events (status=active or current date is between start and end)
+        
+        Returns:
+            List of active event dictionaries
+        """
+        try:
+            now = datetime.now(timezone.utc)
+            
+            query = {
+                "$or": [
+                    {"status": "active"},
+                    {
+                        "start_datetime": {"$lte": now},
+                        "end_datetime": {"$gte": now}
+                    }
+                ]
+            }
+            
+            events_data = self.collection.find(query).sort("start_datetime", 1)
+            return [self._serialize_document(data) for data in events_data]
+            
+        except Exception as e:
+            print(f"Error getting active events: {str(e)}")
+            return []
+    
     def get_upcoming_events(self, limit: int = 10) -> List[Dict[str, Any]]:
         """
         Get upcoming events

@@ -137,31 +137,432 @@ def apply_tamu_theme():
 
 
 def render_login_page():
-    """Render the login page"""
+    """Render the streamlined smart login page with auto-onboarding"""
+    from services.auth_service import AuthService
+    from services.student_service import StudentService
+    from services.mentor_service import MentorService
+    
+    # Hide sidebar on login page
+    st.markdown("""
+        <style>
+            [data-testid="stSidebar"] {
+                display: none;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    # Initialize services
+    auth_service = AuthService()
+    student_service = StudentService()
+    mentor_service = MentorService()
+    
     # Center the login form
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
         st.markdown("<br><br>", unsafe_allow_html=True)
-        st.title("🎓 CMIS Admin Login")
+        st.title("🎓 CMIS Platform")
+        st.markdown("### Login to your account")
         st.markdown("---")
+        
+        # Check if we're in registration mode
+        if "registration_mode" not in st.session_state:
+            st.session_state["registration_mode"] = None
+        
+        # Registration mode routing
+        if st.session_state["registration_mode"] == "student":
+            render_student_registration()
+            return
+        elif st.session_state["registration_mode"] == "mentor":
+            render_mentor_registration()
+            return
         
         # Login form
         with st.form("login_form"):
-            email = st.text_input("Email", placeholder="admin@tamu.edu")
-            password = st.text_input("Password", type="password", placeholder="Enter password")
+            email = st.text_input("Email", placeholder="your.email@tamu.edu")
+            password = st.text_input("Password", type="password", placeholder="Enter your password")
             submit = st.form_submit_button("Login", use_container_width=True, type="primary")
             
             if submit:
-                if check_login(email, password):
-                    st.session_state["authenticated"] = True
-                    st.session_state["admin_email"] = email
-                    st.rerun()
+                if not email or not password:
+                    st.error("❌ Please enter both email and password.")
                 else:
-                    st.error("❌ Invalid email or password. Please try again.")
+                    # Check if admin first (existing behavior - DO NOT BREAK)
+                    if check_login(email, password):
+                        st.session_state["authenticated"] = True
+                        st.session_state["role"] = "admin"
+                        st.session_state["admin_email"] = email
+                        st.session_state["email"] = email
+                        st.success("✅ Admin login successful!")
+                        st.rerun()
+                        return
+                    
+                    # Try auth_users lookup for student
+                    user = auth_service.authenticate_user(email, password, "student")
+                    if user:
+                        st.session_state["authenticated"] = True
+                        st.session_state["role"] = "student"
+                        st.session_state["email"] = email
+                        st.session_state["linked_student_id"] = user.get("linked_student_id")
+                        st.success("✅ Student login successful!")
+                        st.rerun()
+                        return
+                    
+                    # Try auth_users lookup for mentor
+                    user = auth_service.authenticate_user(email, password, "mentor")
+                    if user:
+                        st.session_state["authenticated"] = True
+                        st.session_state["role"] = "mentor"
+                        st.session_state["email"] = email
+                        st.session_state["linked_mentor_id"] = user.get("linked_mentor_id")
+                        st.success("✅ Mentor login successful!")
+                        st.rerun()
+                        return
+                    
+                    # AUTO-ONBOARDING: Check if user exists in students collection
+                    students = student_service.list_students()
+                    student_match = None
+                    for student in students:
+                        if student.get("email", "").lower() == email.lower():
+                            student_match = student
+                            break
+                    
+                    if student_match:
+                        # Create auth_users entry with default password
+                        auth_result = auth_service.create_user(
+                            email=email,
+                            password="Passw0rd!",
+                            role="student",
+                            linked_student_id=student_match.get("student_id")
+                        )
+                        
+                        if "error" not in auth_result:
+                            # Now verify the password they entered
+                            if auth_service.verify_password(password, auth_service.hash_password("Passw0rd!")):
+                                st.session_state["authenticated"] = True
+                                st.session_state["role"] = "student"
+                                st.session_state["email"] = email
+                                st.session_state["linked_student_id"] = student_match.get("student_id")
+                                st.success("✅ Account created and logged in! (Default password: Passw0rd!)")
+                                st.rerun()
+                                return
+                            else:
+                                st.error("❌ Account found. Default password is: Passw0rd!")
+                                return
+                    
+                    # AUTO-ONBOARDING: Check if user exists in mentors collection
+                    mentors = mentor_service.list_mentors()
+                    mentor_match = None
+                    for mentor in mentors:
+                        if mentor.get("email", "").lower() == email.lower():
+                            mentor_match = mentor
+                            break
+                    
+                    if mentor_match:
+                        # Create auth_users entry with default password
+                        auth_result = auth_service.create_user(
+                            email=email,
+                            password="Passw0rd!",
+                            role="mentor",
+                            linked_mentor_id=mentor_match.get("mentor_id")
+                        )
+                        
+                        if "error" not in auth_result:
+                            # Now verify the password they entered
+                            if auth_service.verify_password(password, auth_service.hash_password("Passw0rd!")):
+                                st.session_state["authenticated"] = True
+                                st.session_state["role"] = "mentor"
+                                st.session_state["email"] = email
+                                st.session_state["linked_mentor_id"] = mentor_match.get("mentor_id")
+                                st.success("✅ Account created and logged in! (Default password: Passw0rd!)")
+                                st.rerun()
+                                return
+                            else:
+                                st.error("❌ Account found. Default password is: Passw0rd!")
+                                return
+                    
+                    # If we get here, no account found anywhere
+                    st.error("❌ No account found for this email. Please register as a student or mentor.")
         
         st.markdown("---")
-        st.caption("CMIS Engagement Platform Admin Dashboard")
+        st.markdown("### Don't have an account?")
+        st.markdown("**Register as:**")
+        
+        col_reg1, col_reg2 = st.columns(2)
+        with col_reg1:
+            if st.button("🎓 Student", use_container_width=True):
+                st.session_state["registration_mode"] = "student"
+                st.rerun()
+        
+        with col_reg2:
+            if st.button("🧑‍🏫 Mentor/Judge", use_container_width=True):
+                st.session_state["registration_mode"] = "mentor"
+                st.rerun()
+        
+        st.markdown("---")
+        st.caption("CMIS Engagement Platform")
+
+
+def render_student_registration():
+    """Render student registration form"""
+    from services.auth_service import AuthService
+    from services.student_service import StudentService
+    from utils.pdf_utils import extract_text_from_pdf
+    
+    auth_service = AuthService()
+    student_service = StudentService()
+    
+    st.markdown("### 🎓 Student Registration")
+    st.markdown("Create your student account")
+    st.markdown("---")
+    
+    with st.form("student_registration_form"):
+        st.subheader("Personal Information")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            name = st.text_input("Full Name *", placeholder="John Smith")
+            email = st.text_input("TAMU Email *", placeholder="student@tamu.edu")
+            student_id = st.text_input("Student ID / UIN *", placeholder="123456789")
+        
+        with col2:
+            password = st.text_input("Password *", type="password", placeholder="Min 6 characters")
+            password_confirm = st.text_input("Confirm Password *", type="password")
+        
+        st.subheader("Academic Information")
+        col3, col4 = st.columns(2)
+        
+        with col3:
+            major = st.selectbox("Major *", [
+                "Computer Science", "Information Systems", "Data Science",
+                "Engineering", "Business", "Finance", "Accounting",
+                "Management Information Systems", "Statistics", "Mathematics", "Other"
+            ])
+        
+        with col4:
+            grad_year = st.selectbox("Graduation Year *", [2025, 2026, 2027, 2028, 2029, 2030])
+        
+        skills = st.multiselect("Skills *", [
+            "Python", "Java", "C++", "JavaScript", "React", "SQL",
+            "Machine Learning", "Data Analysis", "Web Development",
+            "Cloud Computing", "Project Management", "Communication",
+            "Leadership", "Problem Solving", "Teamwork"
+        ])
+        
+        interests = st.multiselect("Interests *", [
+            "Software Development", "Data Science", "AI/ML", "Cybersecurity",
+            "Consulting", "Finance", "Entrepreneurship", "Research",
+            "Product Management", "Business Analytics"
+        ])
+        
+        st.subheader("Resume")
+        uploaded_resume = st.file_uploader("Upload Resume (PDF) *", type=["pdf"])
+        
+        col_btn1, col_btn2 = st.columns(2)
+        with col_btn1:
+            submit = st.form_submit_button("Create Account", type="primary", use_container_width=True)
+        with col_btn2:
+            cancel = st.form_submit_button("Cancel", use_container_width=True)
+        
+        if cancel:
+            st.session_state["registration_mode"] = None
+            st.rerun()
+        
+        if submit:
+            # Validation
+            if not all([name, email, student_id, password, password_confirm, major, uploaded_resume]):
+                st.error("❌ Please fill in all required fields.")
+            elif not email.endswith("@tamu.edu"):
+                st.error("❌ Please use your TAMU email (@tamu.edu)")
+            elif password != password_confirm:
+                st.error("❌ Passwords do not match.")
+            elif len(password) < 6:
+                st.error("❌ Password must be at least 6 characters.")
+            elif not skills or not interests:
+                st.error("❌ Please select at least one skill and one interest.")
+            else:
+                # Check if user exists
+                existing = auth_service.get_user(email, "student")
+                if existing:
+                    st.error("❌ An account with this email already exists.")
+                else:
+                    # Parse resume
+                    try:
+                        resume_text = extract_text_from_pdf(uploaded_resume)
+                    except Exception as e:
+                        st.error(f"❌ Error parsing resume: {str(e)}")
+                        resume_text = ""
+                    
+                    if resume_text:
+                        # Create student record
+                        student_data = {
+                            "name": name,
+                            "email": email,
+                            "student_id": student_id,
+                            "major": major,
+                            "grad_year": grad_year,
+                            "gpa": 3.5,  # Default
+                            "interests": interests,
+                            "skills": skills,
+                            "resume_text": resume_text
+                        }
+                        
+                        student_result = student_service.create_student(student_data)
+                        
+                        if "error" in student_result:
+                            st.error(f"❌ Error: {student_result['error']}")
+                        else:
+                            # Create auth user
+                            auth_result = auth_service.create_user(
+                                email=email,
+                                password=password,
+                                role="student",
+                                linked_student_id=student_result.get("student_id")
+                            )
+                            
+                            if "error" in auth_result:
+                                st.error(f"❌ Error: {auth_result['error']}")
+                            else:
+                                st.success("✅ Registration successful! Please log in.")
+                                st.balloons()
+                                st.session_state["registration_mode"] = None
+                                # Force rerun after short delay
+                                import time
+                                time.sleep(2)
+                                st.rerun()
+
+
+def render_mentor_registration():
+    """Render mentor/judge registration form"""
+    from services.auth_service import AuthService
+    from services.mentor_service import MentorService
+    from utils.pdf_utils import extract_text_from_pdf
+    
+    auth_service = AuthService()
+    mentor_service = MentorService()
+    
+    st.markdown("### 🧑‍🏫 Mentor/Judge Registration")
+    st.markdown("Create your mentor account")
+    st.markdown("---")
+    
+    with st.form("mentor_registration_form"):
+        st.subheader("Personal Information")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            name = st.text_input("Full Name *", placeholder="Sarah Johnson")
+            email = st.text_input("Email *", placeholder="mentor@company.com")
+            company = st.text_input("Company *", placeholder="Tech Corp")
+        
+        with col2:
+            password = st.text_input("Password *", type="password", placeholder="Min 6 characters")
+            password_confirm = st.text_input("Confirm Password *", type="password")
+            job_title = st.text_input("Job Title *", placeholder="Senior Engineer")
+        
+        st.subheader("Professional Information")
+        col3, col4 = st.columns(2)
+        
+        with col3:
+            industry = st.selectbox("Industry *", [
+                "Technology", "Finance", "Consulting", "Healthcare",
+                "Education", "Manufacturing", "Retail", "Energy", "Other"
+            ])
+        
+        with col4:
+            years_experience = st.number_input("Years of Experience *", min_value=0, max_value=50, value=5)
+        
+        expertise = st.multiselect("Expertise Areas *", [
+            "Software Development", "Data Science", "Cloud Computing",
+            "Project Management", "Business Strategy", "Finance",
+            "Marketing", "Operations", "Leadership", "Consulting",
+            "Product Management", "Engineering"
+        ])
+        
+        interests = st.multiselect("Mentoring Interests", [
+            "Career Development", "Technical Skills", "Leadership",
+            "Professional Networking", "Industry Insights", "Entrepreneurship"
+        ])
+        
+        st.subheader("Resume/Bio")
+        uploaded_resume = st.file_uploader("Upload Resume/Bio (PDF) *", type=["pdf"])
+        
+        col_btn1, col_btn2 = st.columns(2)
+        with col_btn1:
+            submit = st.form_submit_button("Create Account", type="primary", use_container_width=True)
+        with col_btn2:
+            cancel = st.form_submit_button("Cancel", use_container_width=True)
+        
+        if cancel:
+            st.session_state["registration_mode"] = None
+            st.rerun()
+        
+        if submit:
+            # Validation
+            if not all([name, email, company, job_title, industry, password, password_confirm, uploaded_resume]):
+                st.error("❌ Please fill in all required fields.")
+            elif password != password_confirm:
+                st.error("❌ Passwords do not match.")
+            elif len(password) < 6:
+                st.error("❌ Password must be at least 6 characters.")
+            elif not expertise:
+                st.error("❌ Please select at least one expertise area.")
+            else:
+                # Check if user exists
+                existing = auth_service.get_user(email, "mentor")
+                if existing:
+                    st.error("❌ An account with this email already exists.")
+                else:
+                    # Parse resume
+                    try:
+                        resume_text = extract_text_from_pdf(uploaded_resume)
+                    except Exception as e:
+                        st.error(f"❌ Error parsing resume: {str(e)}")
+                        resume_text = ""
+                    
+                    if resume_text:
+                        # Generate unique mentor ID
+                        import random
+                        mentor_id = f"MEN{random.randint(10000, 99999)}"
+                        
+                        # Create mentor record
+                        mentor_data = {
+                            "name": name,
+                            "email": email,
+                            "mentor_id": mentor_id,
+                            "company": company,
+                            "job_title": job_title,
+                            "industry": industry,
+                            "years_experience": years_experience,
+                            "expertise_areas": expertise,
+                            "interests": interests if interests else [],
+                            "max_mentees": 3,
+                            "current_mentees": 0,
+                            "resume_text": resume_text
+                        }
+                        
+                        mentor_result = mentor_service.create_mentor(mentor_data)
+                        
+                        if "error" in mentor_result:
+                            st.error(f"❌ Error: {mentor_result['error']}")
+                        else:
+                            # Create auth user
+                            auth_result = auth_service.create_user(
+                                email=email,
+                                password=password,
+                                role="mentor",
+                                linked_mentor_id=mentor_result.get("mentor_id")
+                            )
+                            
+                            if "error" in auth_result:
+                                st.error(f"❌ Error: {auth_result['error']}")
+                            else:
+                                st.success("✅ Registration successful! Please log in.")
+                                st.balloons()
+                                st.session_state["registration_mode"] = None
+                                # Force rerun after short delay
+                                import time
+                                time.sleep(2)
+                                st.rerun()
 
 
 def render_sidebar():
@@ -180,6 +581,7 @@ def render_sidebar():
                 "📅 Events",
                 "🏆 Case Competitions",
                 "🤖 Matching",
+                "👥 Mentorship Tracker",
                 "📨 Email Management"
             ]
         )
@@ -1130,6 +1532,201 @@ def render_events_page():
                     st.markdown("**📝 Description:**")
                     st.write(event["description"])
                 
+                # Teams registered for this event
+                st.divider()
+                st.markdown("**👥 Registered Teams:**")
+                
+                # Import team service
+                from services.team_service import TeamService
+                team_service = TeamService()
+                
+                # Get teams for this event
+                event_id_str = str(event.get('_id', ''))
+                teams = team_service.get_teams_by_event(event_id_str)
+                
+                if teams:
+                    st.write(f"**{len(teams)} team(s) registered**")
+                    st.markdown("")
+                    
+                    # Display each team with scoring details (no nested expanders)
+                    for idx, team in enumerate(teams):
+                        team_name = team.get('team_name', 'N/A')
+                        members = team.get('members', [])
+                        member_count = len(members)
+                        member_names = ", ".join([m.get('name', 'Unknown') for m in members[:3]])
+                        if member_count > 3:
+                            member_names += f" + {member_count - 3} more"
+                        
+                        # Get scoring status
+                        final_score = team.get('final_score')
+                        judge_scores = team.get('judge_scores', {})
+                        judges_assigned = team.get('judges_assigned', [])
+                        
+                        # Score display
+                        if final_score is not None:
+                            score_badge = f"✅ Scored: {final_score:.2f}/100"
+                            status_color = "#d4edda"
+                        elif judge_scores:
+                            score_badge = f"⏳ Partially Scored: {len(judge_scores)}/{len(judges_assigned)} judges"
+                            status_color = "#fff3cd"
+                        else:
+                            score_badge = "📝 Not Scored Yet"
+                            status_color = "#f8f9fa"
+                        
+                        # Team card (no expander)
+                        st.markdown(f"<div style='background-color: {status_color}; padding: 15px; border-radius: 5px; margin-bottom: 15px;'>", unsafe_allow_html=True)
+                        st.markdown(f"**🏅 {team_name}** – {member_names}")
+                        st.markdown(f"*{score_badge}*")
+                        
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            st.caption(f"**Members ({member_count}):** " + ", ".join([m.get('name', 'Unknown') for m in members]))
+                        
+                        with col2:
+                            st.caption(f"**Judges:** {len(judges_assigned)} assigned")
+                            if final_score is not None:
+                                st.caption(f"**Final Score:** {final_score:.2f}/100")
+                        
+                        # Show judge scores if available
+                        if judge_scores:
+                            st.markdown("**Judge Scores:**")
+                            for judge_id, score_data in judge_scores.items():
+                                score = score_data.get('score', 'N/A')
+                                comments = score_data.get('comments', '')
+                                st.caption(f"• Judge: {score}/100" + (f" – {comments}" if comments else ""))
+                        
+                        st.markdown("</div>", unsafe_allow_html=True)
+                else:
+                    st.info("No teams registered yet")
+                
+                # Judge Assignment Section
+                st.divider()
+                st.markdown("**👨‍⚖️ Judges Assigned to This Event:**")
+                
+                # Get mentor service
+                from services.mentor_service import MentorService
+                mentor_service = MentorService()
+                
+                # Get all mentors for selection
+                all_mentors = mentor_service.list_mentors()
+                
+                if all_mentors:
+                    # Create mentor options dictionary
+                    mentor_options = {}
+                    for mentor in all_mentors:
+                        display_name = f"{mentor.get('name', 'Unknown')} – {mentor.get('email', '')} – {mentor.get('company', 'N/A')}"
+                        mentor_options[display_name] = str(mentor.get('_id'))
+                    
+                    # Get currently assigned judges
+                    current_judges = event.get('judges_assigned', [])
+                    
+                    # Find default selections
+                    default_selections = []
+                    for display_name, mentor_id in mentor_options.items():
+                        if mentor_id in current_judges:
+                            default_selections.append(display_name)
+                    
+                    # Multiselect for judges
+                    selected_judges_display = st.multiselect(
+                        "Select judges for this event:",
+                        options=list(mentor_options.keys()),
+                        default=default_selections,
+                        key=f"judges_select_{event['_id']}"
+                    )
+                    
+                    # Convert display names to IDs
+                    selected_judge_ids = [mentor_options[name] for name in selected_judges_display]
+                    
+                    col_save1, col_save2, col_save3 = st.columns([2, 1, 2])
+                    with col_save2:
+                        if st.button("💾 Save Judges", key=f"save_judges_{event['_id']}", use_container_width=True, type="primary"):
+                            # Update event with judges
+                            update_result = event_service.update_event(
+                                event_id_str,
+                                {"judges_assigned": selected_judge_ids}
+                            )
+                            
+                            if "error" in update_result:
+                                st.error(f"Error: {update_result['error']}")
+                            else:
+                                # Send email notifications to newly added judges
+                                try:
+                                    from services.email_service import EmailService
+                                    email_service = EmailService()
+                                    
+                                    # Find newly added judges (not in current_judges)
+                                    new_judge_ids = set(selected_judge_ids) - set(current_judges)
+                                    
+                                    if new_judge_ids:
+                                        for judge_id in new_judge_ids:
+                                            judge = mentor_service.get_mentor_by_id(judge_id)
+                                            if judge:
+                                                try:
+                                                    email_service.send_judge_assignment_email(judge, event)
+                                                except Exception as e:
+                                                    print(f"Error sending email to judge {judge_id}: {str(e)}")
+                                        
+                                        st.toast(f"Judge updated & notified!", icon="✅")
+                                    else:
+                                        st.toast(f"Judges updated!", icon="✅")
+                                except Exception as e:
+                                    print(f"Error sending judge emails: {str(e)}")
+                                    st.toast(f"Judges updated!", icon="✅")
+                                
+                                st.rerun()
+                    
+                    # Show current assignments
+                    if current_judges:
+                        st.write(f"**Currently assigned:** {len(current_judges)} judge(s)")
+                    else:
+                        st.info("No judges assigned yet")
+                else:
+                    st.warning("No mentors/judges available in the system")
+                
+                # Random Team Assignment Section
+                if teams and current_judges:
+                    st.divider()
+                    st.markdown("**🎲 Random Team Assignment:**")
+                    
+                    col_rand1, col_rand2, col_rand3 = st.columns([2, 1, 2])
+                    with col_rand2:
+                        if st.button("🎲 Assign Teams Randomly", key=f"random_assign_{event['_id']}", use_container_width=True):
+                            # Random distribution algorithm
+                            import random
+                            teams_copy = teams.copy()
+                            random.shuffle(teams_copy)
+                            
+                            assignments = {}
+                            for i, team in enumerate(teams_copy):
+                                judge_id = current_judges[i % len(current_judges)]
+                                assignments.setdefault(judge_id, []).append(team)
+                            
+                            # Update each team
+                            success_count = 0
+                            for judge_id, assigned_teams in assignments.items():
+                                for team in assigned_teams:
+                                    result = team_service.update_team(
+                                        team['_id'],
+                                        {"judges_assigned": [str(judge_id)]}  # Ensure string ID
+                                    )
+                                    if "error" not in result:
+                                        success_count += 1
+                            
+                            if success_count > 0:
+                                st.success(f"✅ Assigned {success_count} team(s) across {len(current_judges)} judge(s)")
+                                st.balloons()
+                                import time
+                                time.sleep(1)
+                                st.rerun()
+                            else:
+                                st.error("Failed to assign teams")
+                    
+                    st.caption(f"This will distribute {len(teams)} teams equally across {len(current_judges)} judges")
+                
+                elif teams and not current_judges:
+                    st.divider()
+                    st.warning("⚠️ Assign judges to this event first before distributing teams")
+                
                 # Edit form (inline)
                 if st.session_state.get(f"editing_event_{event['_id']}", False):
                     st.divider()
@@ -1541,6 +2138,24 @@ def render_matching_page():
             use_container_width=True
         )
     
+    # Instant testing button
+    if st.button("⚡ Create Mentor Requests (Instant)", use_container_width=True):
+        from services.mentoring_service import MentoringService
+        mentoring_service = MentoringService()
+        
+        with st.spinner("Creating mentorship requests..."):
+            result = workflow.run_matching_workflow_for_student(
+                student_id=student_id,
+                top_n=top_n
+            )
+        
+        if result['success']:
+            st.toast("Mentor requests created instantly!", icon="⚡")
+        else:
+            st.error("Failed to create instant requests")
+            for error in result['errors']:
+                st.warning(f"{error}")
+    
     st.divider()
     
     # Run workflow when button clicked
@@ -1748,6 +2363,156 @@ def render_matching_page():
             )
 
 
+def render_mentorship_tracker():
+    """Render the mentorship tracker showing all mentor-student links"""
+    from services.mentoring_service import MentoringService
+    
+    st.title("👥 Mentorship Tracker")
+    st.markdown("Track all mentorship relationships and their statuses.")
+    st.markdown("---")
+    
+    # Initialize service
+    mentoring_service = MentoringService()
+    
+    # Get all mentorship links
+    all_links = mentoring_service.get_all_links()
+    
+    if not all_links:
+        st.info("📭 No mentorship relationships have been established yet.")
+        st.markdown("")
+        st.markdown("Mentorship links will appear here after the matching engine assigns students to mentors.")
+        return
+    
+    # Display summary metrics
+    total_links = len(all_links)
+    accepted_links = len([link for link in all_links if link.get("status") == "accepted"])
+    pending_links = len([link for link in all_links if link.get("status") == "pending"])
+    declined_links = len([link for link in all_links if link.get("status") == "declined"])
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Total Links", total_links)
+    with col2:
+        st.metric("✅ Accepted", accepted_links)
+    with col3:
+        st.metric("⏳ Pending", pending_links)
+    with col4:
+        st.metric("❌ Declined", declined_links)
+    
+    st.markdown("---")
+    
+    # Create tabs for different statuses
+    tab1, tab2, tab3, tab4 = st.tabs(["📊 All Links", "✅ Accepted", "⏳ Pending", "❌ Declined"])
+    
+    # TAB 1: All Links
+    with tab1:
+        st.markdown("### All Mentorship Relationships")
+        
+        # Prepare data for table
+        table_data = []
+        for link in all_links:
+            status_emoji = {
+                "accepted": "✅",
+                "pending": "⏳",
+                "declined": "❌"
+            }.get(link.get("status"), "❓")
+            
+            table_data.append({
+                "Student Name": link.get("student_name", "Unknown"),
+                "Student Email": link.get("student_email", "N/A"),
+                "Mentor Name": link.get("mentor_name", "Unknown"),
+                "Mentor Email": link.get("mentor_email", "N/A"),
+                "Status": f"{status_emoji} {link.get('status', 'unknown').capitalize()}",
+                "Created": str(link.get("created_at", "N/A"))[:19] if link.get("created_at") else "N/A",
+                "Updated": str(link.get("updated_at", "N/A"))[:19] if link.get("updated_at") else "N/A"
+            })
+        
+        df = pd.DataFrame(table_data)
+        st.dataframe(df, use_container_width=True, hide_index=True)
+        
+        # Export option
+        if st.button("📥 Export to CSV", key="export_all"):
+            csv = df.to_csv(index=False)
+            st.download_button(
+                label="Download CSV",
+                data=csv,
+                file_name=f"mentorship_links_all_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                mime="text/csv"
+            )
+    
+    # TAB 2: Accepted Links
+    with tab2:
+        accepted_links_data = [link for link in all_links if link.get("status") == "accepted"]
+        
+        if accepted_links_data:
+            st.markdown(f"### ✅ Active Mentorships ({len(accepted_links_data)})")
+            
+            for link in accepted_links_data:
+                with st.expander(f"👤 {link.get('student_name')} ← 🧑‍🏫 {link.get('mentor_name')}"):
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        st.markdown("**Student Information:**")
+                        st.write(f"**Name:** {link.get('student_name')}")
+                        st.write(f"**Email:** {link.get('student_email')}")
+                    
+                    with col2:
+                        st.markdown("**Mentor Information:**")
+                        st.write(f"**Name:** {link.get('mentor_name')}")
+                        st.write(f"**Email:** {link.get('mentor_email')}")
+                    
+                    st.markdown("---")
+                    st.markdown("**Match Details:**")
+                    st.write(f"**Status:** ✅ Accepted")
+                    st.write(f"**Created:** {str(link.get('created_at'))[:19] if link.get('created_at') else 'N/A'}")
+                    st.write(f"**Accepted:** {str(link.get('updated_at'))[:19] if link.get('updated_at') else 'N/A'}")
+                    
+                    if link.get("match_reason"):
+                        st.markdown("---")
+                        st.markdown("**Match Reason:**")
+                        st.write(link.get("match_reason"))
+        else:
+            st.info("No accepted mentorships yet.")
+    
+    # TAB 3: Pending Links
+    with tab3:
+        pending_links_data = [link for link in all_links if link.get("status") == "pending"]
+        
+        if pending_links_data:
+            st.markdown(f"### ⏳ Pending Approvals ({len(pending_links_data)})")
+            st.caption("These mentorship requests are awaiting mentor approval.")
+            
+            for link in pending_links_data:
+                st.markdown(f"<div style='background-color: #fff3cd; padding: 15px; border-radius: 5px; margin-bottom: 10px;'>", unsafe_allow_html=True)
+                st.markdown(f"**Student:** {link.get('student_name')} ({link.get('student_email')})")
+                st.markdown(f"**Mentor:** {link.get('mentor_name')} ({link.get('mentor_email')})")
+                st.caption(f"Pending since: {str(link.get('created_at'))[:19] if link.get('created_at') else 'N/A'}")
+                st.markdown("</div>", unsafe_allow_html=True)
+        else:
+            st.info("No pending mentorships.")
+    
+    # TAB 4: Declined Links
+    with tab4:
+        declined_links_data = [link for link in all_links if link.get("status") == "declined"]
+        
+        if declined_links_data:
+            st.markdown(f"### ❌ Declined Mentorships ({len(declined_links_data)})")
+            
+            table_data_declined = []
+            for link in declined_links_data:
+                table_data_declined.append({
+                    "Student": f"{link.get('student_name')} ({link.get('student_email')})",
+                    "Mentor": f"{link.get('mentor_name')} ({link.get('mentor_email')})",
+                    "Declined On": str(link.get("updated_at"))[:19] if link.get("updated_at") else "N/A"
+                })
+            
+            df_declined = pd.DataFrame(table_data_declined)
+            st.dataframe(df_declined, use_container_width=True, hide_index=True)
+        else:
+            st.info("No declined mentorships.")
+
+
 def render_email_management_page():
     """Render the email management page with history sections"""
     st.title("📧 Email Management")
@@ -1762,6 +2527,91 @@ def render_email_management_page():
     with tab1:
         st.subheader("Scheduled Emails (Future Email Queue)")
         st.caption("Emails waiting to be sent at their planned time")
+        
+        # Immediate send button
+        col_send1, col_send2, col_send3 = st.columns([2, 1, 2])
+        with col_send2:
+            if st.button("🚀 Send All Now", type="primary", use_container_width=True, key="send_scheduled_now"):
+                # Get all scheduled emails
+                scheduled_to_send = email_service.list_scheduled_emails()
+                
+                if not scheduled_to_send:
+                    st.warning("No scheduled emails to send")
+                else:
+                    # Send all immediately
+                    from services.student_service import StudentService
+                    from services.mentor_service import MentorService
+                    from services.match_service import MatchService
+                    from ai.email_generation import generate_mentor_outreach_email
+                    
+                    student_service = StudentService()
+                    mentor_service = MentorService()
+                    match_service = MatchService()
+                    
+                    success_count = 0
+                    failed_count = 0
+                    
+                    with st.spinner(f"Sending {len(scheduled_to_send)} emails..."):
+                        for email_doc in scheduled_to_send:
+                            try:
+                                # Get match details
+                                match_id = email_doc.get('match_id')
+                                if not match_id:
+                                    failed_count += 1
+                                    continue
+                                
+                                match = match_service.get_match_by_id(match_id)
+                                if not match:
+                                    failed_count += 1
+                                    continue
+                                
+                                # Get student and mentor
+                                student = student_service.get_student_by_id(match.get('student_id'))
+                                mentor = mentor_service.get_mentor_by_id(match.get('mentor_id'))
+                                
+                                if not student or not mentor:
+                                    failed_count += 1
+                                    continue
+                                
+                                # Generate and send email
+                                subject, body = generate_mentor_outreach_email(
+                                    student=student,
+                                    mentor=mentor,
+                                    match_reason=match.get('match_reason', '')
+                                )
+                                
+                                # Send via n8n webhook
+                                send_success, sent_email_id = email_service.send_mentor_match_email(
+                                    mentor_email=mentor.get('email'),
+                                    mentor_name=mentor.get('name'),
+                                    subject=subject,
+                                    body=body,
+                                    match_id=str(match_id)
+                                )
+                                
+                                if send_success:
+                                    # Mark the scheduled email as sent
+                                    email_service.mark_email_sent(str(email_doc['_id']))
+                                    success_count += 1
+                                else:
+                                    failed_count += 1
+                                    
+                            except Exception as e:
+                                print(f"Error sending email: {str(e)}")
+                                failed_count += 1
+                    
+                    if success_count > 0:
+                        st.success(f"✅ Successfully sent {success_count} email(s) immediately!")
+                        st.balloons()
+                    
+                    if failed_count > 0:
+                        st.warning(f"⚠️ {failed_count} email(s) failed to send")
+                    
+                    import time
+                    time.sleep(2)
+                    st.rerun()
+        
+        st.markdown("---")
         
         scheduled_emails = email_service.list_scheduled_emails()
         
@@ -1863,6 +2713,9 @@ def render_email_management_page():
 
 def main():
     """Main application entry point"""
+    from views.student_dashboard_view import render_student_dashboard
+    from views.mentor_dashboard_view import render_mentor_dashboard
+    
     # Initialize the app
     init_app()
     
@@ -1871,6 +2724,21 @@ def main():
         render_login_page()
         return
     
+    # Get user role
+    role = st.session_state.get("role", "admin")
+    
+    # Route based on role
+    if role == "student":
+        # Student dashboard - no sidebar navigation
+        render_student_dashboard()
+        return
+    
+    elif role == "mentor":
+        # Mentor dashboard - no sidebar navigation
+        render_mentor_dashboard()
+        return
+    
+    # Admin role - existing behavior (DO NOT BREAK)
     # Render sidebar and get selected page
     page = render_sidebar()
     
@@ -1887,6 +2755,8 @@ def main():
         render_case_competitions_page()
     elif page == "🤖 Matching":
         render_matching_page()
+    elif page == "👥 Mentorship Tracker":
+        render_mentorship_tracker()
     elif page == "📨 Email Management":
         render_email_management_page()
 

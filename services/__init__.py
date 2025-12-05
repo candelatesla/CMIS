@@ -7,6 +7,7 @@ from .event_service import EventService
 from .case_comp_service import CaseCompService
 from .match_service import MatchService
 from .email_service import EmailService
+from .mentoring_service import MentoringService
 
 __all__ = [
     "StudentService",
@@ -14,5 +15,6 @@ __all__ = [
     "EventService",
     "CaseCompService",
     "MatchService",
-    "EmailService"
+    "EmailService",
+    "MentoringService"
 ]

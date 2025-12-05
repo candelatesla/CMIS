@@ -328,131 +328,53 @@ def generate_mentor_outreach_email(
         match_reason: AI-generated reason for the match (should NOT contain scores)
         
     Returns:
-        tuple: (subject, body) - email subject and body text
+        tuple: (subject, body) - email subject and body text (formatted as HTML)
     """
     
-    # Extract student information
+    # Import formatting utilities
+    from utils.email_formatting import build_mentor_match_email_html, build_mentor_match_email_plain
+    
+    # Extract student and mentor information for subject line
     student_name = student.get('name', 'Student')
-    student_major = student.get('major', 'N/A')
-    student_grad_year = student.get('grad_year', 'N/A')
-    student_interests = ', '.join(student.get('interests', [])[:3])
-    student_skills = ', '.join(student.get('skills', [])[:4])
-    
-    # Extract mentor information
     mentor_name = mentor.get('name', 'Mentor')
-    mentor_title = mentor.get('job_title', 'N/A')
-    mentor_company = mentor.get('company', 'N/A')
-    mentor_expertise = ', '.join(mentor.get('expertise_areas', [])[:3])
     
-    # Create the prompt for a natural, human-sounding email
-    prompt = f"""Write a warm, genuine mentor outreach email from the CMIS program coordinator.
-
-STUDENT:
-- Name: {student_name}
-- Major: {student_major}
-- Graduating: {student_grad_year}
-- Interests: {student_interests}
-- Skills: {student_skills}
-
-MENTOR:
-- Name: {mentor_name}
-- Role: {mentor_title} at {mentor_company}
-- Expertise: {mentor_expertise}
-
-WHY THEY'RE A GOOD MATCH:
-{match_reason}
-
-Write a brief, natural email (2-3 short paragraphs) that:
-1. Introduces the student warmly
-2. Explains why they would benefit from this mentor's guidance (use the match reason naturally)
-3. Mentions specific overlapping interests/expertise
-4. Asks if the mentor is open to connecting
-
-DO NOT mention: match scores, algorithms, similarity percentages, AI, or technical processes.
-
-Use this structure:
-
-Hi [mentor name],
-
-I hope you're doing well. I'm reaching out from the CMIS Engagement Platform to introduce you to [student], a [major] major graduating in [year].
-
-[Blend the match reason here naturally - explain why this connection makes sense based on their interests and your expertise]
-
-Based on your background in [expertise], and the student's interests in [interests], we feel you would be an excellent fit for mentorship.
-
-If you're open to it, we'd love for you to consider connecting with [student]. Please let us know if you'd like an introduction.
-
-Warm regards,
-The CMIS Team
-
-Format as:
-SUBJECT: [subject line]
-
-BODY:
-[email body]"""
+    # Try to generate AI-powered content for subject
+    subject = f"Mentorship Opportunity: {student_name}"
     
     try:
         from groq import Groq as GroqClient
         client = GroqClient(api_key=GROQ_API_KEY)
         
-        # Call Groq API
+        # Quick prompt just for subject line
+        subject_prompt = f"Write a warm, brief subject line (max 60 chars) for an email introducing {student_name} to mentor {mentor_name}. Just the subject line, no extra text."
+        
         response = client.chat.completions.create(
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a CMIS program coordinator. Write warm, natural, genuine outreach emails. Do NOT mention match scores, algorithms, AI models, or technical processes. Focus on the student, the mentor, and why the connection makes sense. Keep it brief, human, and encouraging."
+                    "content": "You write brief, warm email subject lines. Output only the subject line, nothing else."
                 },
                 {
                     "role": "user",
-                    "content": prompt
+                    "content": subject_prompt
                 }
             ],
             model="mixtral-8x7b-32768",
             temperature=0.6,
-            max_tokens=600,
+            max_tokens=50,
             top_p=0.9
         )
         
-        content = response.choices[0].message.content.strip()
-        
-        # Parse subject and body
-        if "BODY:" in content:
-            parts = content.split("BODY:", 1)
-            subject_part = parts[0].replace("SUBJECT:", "").strip()
-            body = parts[1].strip()
-        else:
-            # Fallback parsing
-            lines = content.split('\n', 1)
-            subject_part = lines[0].replace("SUBJECT:", "").strip()
-            body = lines[1].strip() if len(lines) > 1 else content
-        
-        # Clean up markdown formatting and extra asterisks
-        subject_part = subject_part.replace('**', '').replace('*', '').strip()
-        body = body.replace('**', '').replace('*', '').strip()
-        
-        # Remove any markdown headers or code blocks
-        if subject_part.startswith('#'):
-            subject_part = subject_part.lstrip('#').strip()
-        if body.startswith('```'):
-            body = '\n'.join([line for line in body.split('\n') if not line.startswith('```')])
-        
-        return (subject_part, body)
+        ai_subject = response.choices[0].message.content.strip()
+        # Clean up any quotation marks or extra formatting
+        ai_subject = ai_subject.replace('"', '').replace("'", "").replace('SUBJECT:', '').strip()
+        if len(ai_subject) <= 80 and ai_subject:
+            subject = ai_subject
         
     except Exception as e:
-        # Fallback email with proper formatting
-        subject = f"Introduction to a Potential Mentee"
-        
-        body = f"""Hi {mentor_name},
-
-I hope you're doing well. I'm reaching out from the CMIS Engagement Platform to introduce you to {student_name}, a {student_major} major graduating in {student_grad_year}.
-
-{match_reason.strip()}
-
-Based on your background in {mentor_expertise}, and the student's interests in {student_interests}, we feel you would be an excellent fit for mentorship.
-
-If you're open to it, we'd love for you to consider connecting with {student_name}. Please let us know if you'd like an introduction.
-
-Warm regards,
-The CMIS Team"""
-        
-        return (subject, body)
+        print(f"Note: Using fallback subject line (AI generation not available: {str(e)})")
+    
+    # Use HTML formatting by default
+    body = build_mentor_match_email_html(student, mentor, match_reason)
+    
+    return (subject, body)

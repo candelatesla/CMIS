@@ -75,6 +75,20 @@ class WorkflowEngine:
                     match_id = self.match_service.create_match(match)
                     results["matches_created"] += 1
                     
+                    # INSTANT: Create pending mentorship request immediately (DB-only, email-independent)
+                    try:
+                        from services.mentoring_service import MentoringService
+                        mentoring_service = MentoringService()
+                        mentoring_service.assign_pending_match(
+                            student_id=match.student_id,
+                            mentor_id=match.mentor_id,
+                            match_reason=match.reason_summary or "AI-generated match"
+                        )
+                        # Mentor sees request instantly in dashboard, regardless of email status
+                    except Exception as e:
+                        print(f"Warning: Failed to create mentoring link (non-critical): {str(e)}")
+                        # Don't fail the match if mentoring link fails
+                    
                     # Send notification email if enabled
                     if send_notifications:
                         student = next(
@@ -317,7 +331,7 @@ class WorkflowEngine:
                     # 4a. Create MentorMatch entry
                     match_data = {
                         "student_id": student_id,
-                        "mentor_id": match["mentor"].get("mentor_id"),
+                        "mentor_id": match.get("mentor_id"),  # Use top-level mentor_id from match dict
                         "match_score": match["score"],
                         "reason_summary": match.get("reason", "AI-generated match"),
                         "status": "pending"
@@ -333,6 +347,20 @@ class WorkflowEngine:
                     match_id = created_match.get("_id")
                     match_detail["match_id"] = match_id
                     results["matches_created"] += 1
+                    
+                    # 4a-INSTANT: Create pending mentorship request immediately (DB-only, email-independent)
+                    try:
+                        from services.mentoring_service import MentoringService
+                        mentoring_service = MentoringService()
+                        mentoring_service.assign_pending_match(
+                            student_id=student_id,
+                            mentor_id=match.get("mentor_id"),  # Use top-level mentor_id from match dict
+                            match_reason=match.get("reason", "AI-generated match")
+                        )
+                        # This runs regardless of email success - mentor sees request instantly in dashboard
+                    except Exception as e:
+                        print(f"Warning: Failed to create mentoring link (non-critical): {str(e)}")
+                        # Don't fail the match if mentoring link fails
                     
                     # 4b. Generate personalized email content via Groq
                     try:
