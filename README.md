@@ -1,9 +1,21 @@
-# CMIS Engagement Platform Admin Dashboard
+# CMIS Engagement Platform
 
-A full-featured admin dashboard for the CMIS Engagement Platform built with Python, Streamlit, MongoDB, and Groq AI.
+A full-featured engagement platform for the CMIS program at Texas A&M University, featuring AI-powered student-mentor matching, event management, and automated workflows. Built with Python, Streamlit, MongoDB, and Groq AI.
 
-## Features
+## 🏆 Competition Achievement
 
+**2nd Place Overall** - 2025 CMIS Case Competition at Texas A&M University
+
+Recognized for:
+- Exceptional technical implementation
+- End-to-end automation
+- AI-powered matching engine
+- Advanced workflow orchestration via N8N
+- Clean UI and robust role-based dashboards
+
+## ✨ Features
+
+### Admin Dashboard
 - 👨‍🎓 **Student Management**: Add, edit, and manage student profiles
 - 👔 **Mentor Management**: Manage mentor profiles and availability
 - 📅 **Event Management**: Create and manage events and workshops
@@ -11,18 +23,53 @@ A full-featured admin dashboard for the CMIS Engagement Platform built with Pyth
 - 🤖 **AI-Powered Matching**: Intelligent student-mentor matching using Groq API
 - 📧 **Email Management**: Send emails via N8N webhook with AI-generated content
 - ⏰ **Task Scheduling**: Automated workflows and reminders
+- ⚡ **Instant Demo Mode**: Create mentor requests instantly for presentations
 
-## Tech Stack
+### Student Dashboard
+- ✏️ Edit complete profile (name, major, UIN, skills, interests, contact)
+- 📄 Upload and version resumes (automatic version control)
+- 📅 Register for events and create teams
+- 👔 View assigned mentors after acceptance
+- 🏅 View team scores after judge evaluations
+- 📧 Receive automated HTML-formatted emails for mentorship, registration, and scoring
+
+### Mentor/Judge Dashboard
+- 📋 View pending mentorship requests from AI matching
+- 👤 Review student profiles, resumes, skills, and match explanations
+- ✅ Accept or decline mentorship requests
+- 📊 View assigned events and teams for judging
+- 💯 Enter scores and comments for team evaluations
+- 📧 Instant email notifications for all actions
+
+## 🔄 Key Workflows
+
+### Mentorship Acceptance Workflow
+1. Admin runs AI matching algorithm
+2. Pending mentorship requests created (supports Instant Mode)
+3. Mentor logs in and views pending requests
+4. Mentor accepts/declines request
+5. Automated emails sent to both student and mentor
+6. Student dashboard updates with mentor details
+7. All updates reflect instantly
+
+### Judge Scoring Workflow
+1. Admins assign judges to events
+2. Teams register for events
+3. Admin assigns teams to judges (randomized distribution)
+4. Judges view assigned teams and enter scores (0-100) with comments
+5. Scores saved and students notified via email
+6. Real-time updates across all dashboards
+
+## 🛠️ Tech Stack
 
 - **Frontend**: Streamlit
-- **Backend**: Python 3.11
-- **Database**: MongoDB (pymongo)
+- **Backend**: Python 3.11+
+- **Database**: MongoDB Atlas (pymongo)
 - **AI**: Groq API (LLaMA 3.1 / Mixtral models)
-- **Email**: N8N webhook integration
+- **Email Automation**: N8N webhook integration
 - **PDF Processing**: pdfplumber
-- **Scheduling**: APScheduler
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 CMIS/
@@ -52,118 +99,109 @@ CMIS/
 │   ├── matching.py            # Student-mentor matching algorithm
 │   ├── email_generation.py    # AI email generation
 │   └── workflow.py            # Automated workflows
-├── utils/                      # Utility functions
-│   ├── __init__.py
-│   ├── pdf_utils.py           # PDF processing
-│   └── time_utils.py          # Time and date utilities
-└── sample_data/               # Sample data for testing
-    ├── sample_student_resumes.txt
-    └── sample_mentor_resumes.txt
+└── utils/                      # Utility functions
+    ├── __init__.py
+    ├── pdf_utils.py           # PDF processing
+    └── time_utils.py          # Time and date utilities
 ```
 
-## Setup Instructions
+## 📊 Data Models
 
-### 1. Prerequisites
+### Student
+- Personal info (name, email, UIN, major, graduation year)
+- Skills and interests
+- Career goals
+- Resume versions and LinkedIn profile
+- Team registrations and scores
 
-- Python 3.11+
-- MongoDB (local or cloud instance like MongoDB Atlas)
-- Groq API key (get from https://console.groq.com)
-- N8N instance with webhook configured (optional for email features)
+### Mentor
+- Professional info (company, job title, years of experience)
+- Expertise areas and industries
+- Availability and mentoring capacity
+- Judge assignments
 
-### 2. Installation
+### Match
+- Student-mentor pairing
+- AI-generated match score (0-100%)
+- Detailed match explanation from Groq AI
+- Status (pending, accepted, active, completed)
 
-1. Clone or download the project
+### Event
+- Event details (title, description, date, location)
+- Registration tracking and team management
+- Judge assignments
+- Capacity management
 
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
+### Team
+- Team name and members
+- Event registration
+- Judge assignments and scores
+- Comments and feedback
+
+## 🤖 AI Features
+
+### Student-Mentor Matching Algorithm
+
+The hybrid scoring algorithm uses:
+- **40% Interest Alignment**: Matching career goals and interests
+- **40% Skills Match**: Technical and soft skills compatibility
+- **20% Resume Similarity**: NLP-based text analysis
+
+#### Running AI Matching
+
+Navigate to "Matching" page in the Admin Dashboard, click "Run AI Matching Algorithm", and the system will:
+1. Analyze all students and mentors
+2. Generate match scores with AI explanations
+3. Create pending mentorship requests
+4. Send notification emails automatically
+
+### AI Email Generation
+
+1. Navigate to "Email Management" page
+2. Select recipients and email purpose
+3. Click "Generate with AI"
+4. Review AI-generated HTML email
+5. Send with one click
+
+## 🎯 System Architecture
+
+```
+┌─────────────────┐          ┌────────────────┐
+│   Student UI     │          │   Mentor UI     │
+│ (Streamlit App)  │          │ (Judge UI)      │
+└─────────┬────────┘          └────────┬────────┘
+          │                             │
+          ▼                             ▼
+     Student Service               Mentor/Judge Service
+          │                             │
+          ├──────────────┬──────────────┤
+          ▼              ▼              ▼
+     Matching Engine   Team Service   Event Service
+     (Groq AI API)                         │
+          │                                 │
+          ▼                                 ▼
+     Mentor Matching                 Judge Assignment
+          │                                 │
+          └──────────┬───────────┬─────────┘
+                     ▼           ▼
+               MongoDB Atlas   N8N Webhook
+                     │           │
+                     ▼           ▼
+              Data Persistence   Automated Emails
 ```
 
-3. Create environment configuration:
-```bash
-cp .env.example .env
-```
+## 🔧 Development
 
-4. Edit `.env` file with your credentials:
-```
-MONGODB_URI=mongodb://localhost:27017/
-MONGODB_DB_NAME=cmis_engagement
-GROQ_API_KEY=your_groq_api_key_here
-N8N_WEBHOOK_URL=https://your-n8n-instance.com/webhook/your-webhook-id
-```
+### Adding New Features
 
-### 3. Run the Application
-
-```bash
-streamlit run app.py
-```
-
-The dashboard will open in your browser at `http://localhost:8501`
-
-## Configuration
-
-### MongoDB Setup
-
-For local MongoDB:
-```bash
-# Install MongoDB (macOS)
-brew install mongodb-community
-
-# Start MongoDB
-brew services start mongodb-community
-```
-
-For MongoDB Atlas (cloud):
-1. Create account at https://www.mongodb.com/cloud/atlas
-2. Create a cluster
-3. Get connection string and update `MONGODB_URI` in `.env`
-
-### Groq API Setup
-
-1. Sign up at https://console.groq.com
-2. Create an API key
-3. Add to `.env` file as `GROQ_API_KEY`
-
-Available models:
-- `llama-3.1-70b-versatile` (recommended for matching)
-- `mixtral-8x7b-32768` (alternative option)
-
-### N8N Email Setup (Optional)
-
-1. Set up N8N instance (cloud or self-hosted)
-2. Create webhook workflow for sending emails
-3. Add webhook URL to `.env` as `N8N_WEBHOOK_URL`
-
-## Usage
-
-### Dashboard Pages
-
-1. **Dashboard**: Overview of platform metrics and activity
-2. **Students**: Manage student profiles and data
-3. **Mentors**: Manage mentor profiles and availability
-4. **Events**: Create and manage events
-5. **Case Competitions**: Organize competitions
-6. **Matching**: AI-powered student-mentor matching
-7. **Email Management**: Send emails with AI generation
-
-### AI Features
-
-#### Student-Mentor Matching
-- Navigate to "Matching" page
-- Click "Run AI Matching Algorithm"
-- System will analyze students and mentors
-- Generate match scores with explanations
-- Send notification emails automatically
-
-#### AI Email Generation
-- Navigate to "Email Management" page
-- Select recipients and purpose
-- Click "Generate with AI"
-- Review and send AI-generated email
+1. Create data model in `models/`
+2. Create service class in `services/`
+3. Add UI components in `app.py`
+4. Wire up in main navigation
 
 ### API Usage
 
-The services can also be used programmatically:
+Services can be used programmatically:
 
 ```python
 from services.student_service import StudentService
@@ -171,129 +209,44 @@ from ai.matching import MatchingEngine
 
 # Create student
 student_service = StudentService()
-# ... use service methods
+student = student_service.create_student({
+    "name": "John Doe",
+    "email": "john@tamu.edu",
+    "major": "MIS"
+})
 
 # Run AI matching
 matching_engine = MatchingEngine()
+mentors = mentor_service.get_all_mentors()
 matches = matching_engine.find_best_matches(student, mentors, top_k=5)
 ```
 
-## Data Models
+## 🔮 Future Enhancements
 
-### Student
-- Personal info (name, email, major, year)
-- Skills and interests
-- Career goals
-- Resume and LinkedIn links
+- [ ] User authentication and role-based authorization
+- [ ] Bulk import via CSV/Excel for students and mentors
+- [ ] Advanced analytics and reporting dashboard
+- [ ] Mobile-responsive design improvements
+- [ ] Calendar integration for events (Google Calendar, Outlook)
+- [ ] Real-time notifications (WebSocket/Server-Sent Events)
+- [ ] In-app chat functionality for mentor-student communication
+- [ ] Export reports to PDF
+- [ ] Integration with university systems (Banner, Canvas)
+- [ ] Multi-language support
 
-### Mentor
-- Professional info (company, job title)
-- Expertise areas and industries
-- Availability and mentoring capacity
-- Years of experience
-
-### Match
-- Student-mentor pairing
-- AI-generated match score (0-1)
-- Match explanation
-- Status (pending, accepted, active, completed)
-
-### Event
-- Event details (title, description, date)
-- Location (physical or virtual)
-- Registration tracking
-- Capacity management
-
-## Development
-
-### Adding New Features
-
-1. Create model in `models/`
-2. Create service in `services/`
-3. Add UI in `app.py`
-4. Wire up in main navigation
-
-### Testing
-
-Use sample data provided in `sample_data/` directory for testing.
-
-## Data Seeding and Testing
-
-### 1. Seed Students (20 profiles)
-
-```bash
-python scripts/seed_students.py
-```
-
-This creates 20 diverse student profiles with:
-- Majors: MIS, CSCE, CYBR, ISEN, STAT
-- Graduation years: 2025-2027
-- Realistic interests, skills, and resume text
-- Idempotent (safe to run multiple times)
-
-### 2. Test AI Matching Engine
-
-```bash
-python scripts/test_matching_engine.py
-```
-
-This script:
-- Loads all mentors and students from database
-- Runs AI matching for each student against all 7 mentors
-- Displays top 3 matches with scores and AI-generated explanations
-- Uses the hybrid scoring algorithm (40% interests, 40% skills, 20% resume similarity)
-- Calls Groq Mixtral API for match reasoning
-
-**Expected Output:**
-```
-=== MATCH RESULTS FOR: Sarah Chen ===
-1. 👔 Mentor: Blaine Bryant | Score: 82.5%
-   💡 Reason: Strong alignment in cloud architecture and distributed systems...
-2. 👔 Mentor: Jeff Richardson | Score: 74.3%
-3. 👔 Mentor: John Billings | Score: 63.8%
-```
-
-### Prerequisites
-
-Before running these scripts, ensure:
-1. MongoDB is running and connection is configured in `.env`
-2. Mentors are seeded: `python scripts/seed_cmis_data.py`
-3. Groq API key is set in `.env` (for AI reasoning)
-4. Virtual environment is activated and dependencies are installed
-
-## Troubleshooting
-
-### MongoDB Connection Issues
-- Ensure MongoDB is running
-- Check connection string in `.env`
-- Verify network access (for MongoDB Atlas)
-
-### Groq API Errors
-- Verify API key is correct
-- Check API quota/limits
-- Ensure internet connection
-
-### Import Errors
-- Reinstall dependencies: `pip install -r requirements.txt`
-- Check Python version (3.11+ required)
-
-## License
+## 📄 License
 
 MIT License - feel free to use and modify for your needs.
 
-## Support
+## 🤝 Contributing
 
-For issues or questions, please check:
-- MongoDB documentation: https://docs.mongodb.com
-- Streamlit documentation: https://docs.streamlit.io
-- Groq API documentation: https://console.groq.com/docs
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Future Enhancements
+## 👥 Team
 
-- [ ] Add user authentication and authorization
-- [ ] Implement file upload for bulk student/mentor import
-- [ ] Add analytics and reporting dashboard
-- [ ] Create mobile-responsive design
-- [ ] Add calendar integration for events
-- [ ] Implement real-time notifications
-- [ ] Add chat functionality for matches
+Developed for the CMIS Case Competition at Texas A&M University.
+Team Members: Yash Doshi, Khushi Shah, Chintan Shah & Ujjawal Patel
+
+## 📧 Support
+
+For issues or questions, open an issue on GitHub or check the documentation links above.
