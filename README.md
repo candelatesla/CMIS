@@ -73,6 +73,7 @@ Recognized for:
 
 ```
 CMIS/
+├── Product-Canvas.pdf          # Product Canvas for the CMIS application - AggieLink
 ├── app.py                      # Main Streamlit application
 ├── config.py                   # Configuration and environment variables
 ├── db.py                       # MongoDB connection utilities
@@ -163,33 +164,6 @@ Navigate to "Matching" page in the Admin Dashboard, click "Run AI Matching Algor
 4. Review AI-generated HTML email
 5. Send with one click
 
-## 🎯 System Architecture
-
-```
-┌─────────────────┐          ┌────────────────┐
-│   Student UI     │          │   Mentor UI     │
-│ (Streamlit App)  │          │ (Judge UI)      │
-└─────────┬────────┘          └────────┬────────┘
-          │                             │
-          ▼                             ▼
-     Student Service               Mentor/Judge Service
-          │                             │
-          ├──────────────┬──────────────┤
-          ▼              ▼              ▼
-     Matching Engine   Team Service   Event Service
-     (Groq AI API)                         │
-          │                                 │
-          ▼                                 ▼
-     Mentor Matching                 Judge Assignment
-          │                                 │
-          └──────────┬───────────┬─────────┘
-                     ▼           ▼
-               MongoDB Atlas   N8N Webhook
-                     │           │
-                     ▼           ▼
-              Data Persistence   Automated Emails
-```
-
 ## 🔧 Development
 
 ### Adding New Features
@@ -244,7 +218,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 👥 Team
 
-Developed for the CMIS Case Competition at Texas A&M University.
+Developed for the 2025CMIS Case Competition at Texas A&M University.
 Team Members: Yash Doshi, Khushi Shah, Chintan Shah & Ujjawal Patel
 
 ## 📧 Support
