@@ -208,9 +208,10 @@ matches = matching_engine.find_best_matches(student, mentors, top_k=5)
 - [ ] Integration with university systems (Banner, Canvas)
 - [ ] Multi-language support
 
-## 📄 License
+## License / Copyright
+© 2026 Yash Chetan Doshi. All rights reserved.
 
-MIT License - feel free to use and modify for your needs.
+You may not copy, modify, distribute, or use any part of this repository or its contents without prior written permission from the author.
 
 ## 🤝 Contributing
 
